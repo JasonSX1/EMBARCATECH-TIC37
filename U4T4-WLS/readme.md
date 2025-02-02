@@ -16,6 +16,9 @@
   </a>
 </p>
 
+[![Assista ao vídeo](https://img.youtube.com/vi/uTl-7Aydqb8/maxresdefault.jpg)](https://youtu.be/uTl-7Aydqb8)
+
+
 #### Ou você pode acessar o vídeo clicando aqui: [Link para o vídeo](https://youtu.be/uTl-7Aydqb8)
 
 ---
