@@ -30,7 +30,7 @@ O sistema exibe números na matriz de LEDs e permite ao usuário alternar entre 
 1. Exibição de números de 0 a 9 na matriz de LEDs.
 2. Botão A para avançar para o próximo número.
 3. Botão B para retroceder para o número anterior.
-4. Ajuste automático da luminosidade para evitar brilho excessivo.
+4. Ajuste da luminosidade para evitar brilho excessivo.
 5. Controle de debounce para evitar leituras incorretas dos botões.
 6. LED RGB externo piscando para indicar funcionamento do sistema.
 
