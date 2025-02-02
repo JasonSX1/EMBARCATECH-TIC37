@@ -14,11 +14,10 @@
 <p align="center">
   <a href="https://youtu.be/uTl-7Aydqb8">
     <img src="https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg" alt="Video da Atividade">
-
-    #### Ou você pode acessar o vídeo clicando aqui: [Link para o vídeo](https://youtu.be/uTl-7Aydqb8)
   </a>
 </p>
 
+#### Ou você pode acessar o vídeo clicando aqui: [Link para o vídeo](https://youtu.be/uTl-7Aydqb8)
 
 ---
 
