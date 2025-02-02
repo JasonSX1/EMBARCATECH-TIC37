@@ -12,16 +12,9 @@
 
 <p align="center">
   <a href="https://youtu.be/uTl-7Aydqb8">
-    <img src="https://img.youtube.com/vi/uTl-7Aydqb8/maxresdefault.jpg" alt="Assista ao vídeo" width="800">
+      <img src="https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg" alt="Video da Atividade">
   </a>
 </p>
-
-<p align="center">
-  <a href="https://youtu.be/uTl-7Aydqb8">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/YouTube_social_white_play.svg" width="100">
-  </a>
-</p>
-
 
 #### Ou você pode acessar o vídeo clicando aqui: [Link para o vídeo](https://youtu.be/uTl-7Aydqb8)
 
