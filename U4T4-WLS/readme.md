@@ -7,6 +7,8 @@
 
 ---
 
-[![Video da Atividade](https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg)](https://youtu.be/uTl-7Aydqb8)
+<div align="center">
+  [![Video da Atividade](https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg)](https://youtu.be/uTl-7Aydqb8)
+</div>
 
 ---
