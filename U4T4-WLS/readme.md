@@ -14,10 +14,12 @@
 <p align="center">
   <a href="https://youtu.be/uTl-7Aydqb8">
     <img src="https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg" alt="Video da Atividade">
+
+    #### Ou você pode acessar o vídeo clicando aqui: [Link para o vídeo](https://youtu.be/uTl-7Aydqb8)
   </a>
 </p>
 
-#### Ou você pode acessar o vídeo clicando aqui: [Link para o vídeo](https://youtu.be/uTl-7Aydqb8)
+
 ---
 
 Este projeto faz parte da quarta atividade obrigatória da unidade 4 do curso Embarcatech em sistemas embarcados e tem como objetivo utilizar o simulador Wokwi e o microcontrolador Raspberry Pi Pico para exibir números de 0 a 9 em uma matriz de LEDs 5x5 WS2812, controlada por dois botões físicos.
