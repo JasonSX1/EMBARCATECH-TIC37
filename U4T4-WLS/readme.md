@@ -7,9 +7,10 @@
 
 ---
 
-<div align="center">
-[![Video da Atividade](https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg)](https://youtu.be/uTl-7Aydqb8)
-</div>
+<p align="center">
+  <a href="https://youtu.be/uTl-7Aydqb8">
+    <img src="https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg" alt="Video da Atividade">
+  </a>
+</p>
 
-[![Video da Atividade](https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg)](https://youtu.be/uTl-7Aydqb8)
 ---
