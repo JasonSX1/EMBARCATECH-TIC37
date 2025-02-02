@@ -72,10 +72,10 @@ O sistema funciona da seguinte maneira:
    ```bash
    git clone https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4T4-WLS
 
-   Abra o projeto no VS Code.
+2. Abra o projeto no VS Code.
 
-2. Configure o Pico SDK e o simulador Wokwi seguindo esta documentação.
+3. Configure o Pico SDK e o simulador Wokwi seguindo esta documentação.
 
-3. Compile e execute o código no simulador Wokwi ou na sua placa BitDogLab.
+4. Compile e execute o código no simulador Wokwi ou na sua placa BitDogLab.
 
-4. Utilize os botões para alternar os números exibidos na matriz.
+5. Utilize os botões para alternar os números exibidos na matriz.
