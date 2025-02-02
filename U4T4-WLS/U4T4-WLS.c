@@ -37,7 +37,7 @@ typedef struct pixel_t pixel_t; // Definição do tipo pixel_t
 pixel_t leds[LEDS_COUNT];
 
 // Definição de tempo de debounce em ms
-#define DEBOUNCE_TIME_MS 999
+#define DEBOUNCE_TIME_MS 600
 
 // Variáveis globais para controle do número exibido e estado dos botões
 volatile uint8_t number = 0;
