@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/U4-T5-ClockTemp-Ativ1.uf2'
+elf = 'build/U4-T5-ClockTemp-Ativ1.elf'
