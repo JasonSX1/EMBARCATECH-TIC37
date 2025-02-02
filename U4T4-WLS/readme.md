@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://youtu.be/uTl-7Aydqb8">
-    <img src="https://img.youtube.com/vi/uTl-7Aydqb8/0.jpg" alt="Video da Atividade">
+    <img src="https://img.youtube.com/vi/uTl-7Aydqb8/maxresdefault.jpg" alt="Video da Atividade">
   </a>
 </p>
 
