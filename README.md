@@ -3,7 +3,7 @@
 ---
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/a05f7923-0250-464c-8ed4-14757cc5e353" alt="Logo do repositório">
+  <img src="https://github.com/user-attachments/assets/e2df901b-a732-40cd-b8ba-0015ec9fbfa7" alt="Logo do repositório">
 </div>
 
 ---
