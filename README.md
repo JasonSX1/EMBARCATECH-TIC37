@@ -14,6 +14,10 @@ Este repositório central contém as atividades desenvolvidas para o curso **EMB
 
 As atividades estão organizadas em sub-repositórios, conforme o cronograma de desenvolvimento:
 
+---
+
+## Unidade 4:
+
 ### 🔹 [Atividade 1 - Exibição de Números em uma Matriz de LEDs 5x5 (27/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4T4-WLS)
 
 > **Descrição:** Implementação de um sistema utilizando o **simulador Wokwi** e o **Raspberry Pi Pico**, para exibir números de **0 a 9** em uma matriz de LEDs **5x5 WS2812**, controlada por dois botões físicos. O projeto inclui:
@@ -29,6 +33,8 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 ### 🔹 [Atividade 2 - Parte 2: Sequência de Cores e Controle via Botão (29/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T5-ClockTemp-Ativ3)
 
 > **Descrição:** Extensão da Atividade 2, adicionando **controle de cores** para LEDs RGB na plataforma **BitDogLab**. O sistema exibe a sequência de transições **branco → roxo → vermelho → apagado**, garantindo que apenas um ciclo seja executado por vez.
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
