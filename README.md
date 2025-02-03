@@ -20,7 +20,7 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 
 ### 🔹 [Atividade 1 - Exibição de Números em uma Matriz de LEDs 5x5 (27/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4T4-WLS)
 
-> **Descrição:** Implementação de um sistema utilizando o **simulador Wokwi** e o **Raspberry Pi Pico**, para exibir números de **0 a 9** em uma matriz de LEDs **5x5 WS2812**, controlada por dois botões físicos. O projeto inclui:
+> **Descrição:** Implementação de um sistema utilizando o **simulador Wokwi** e o **Raspberry Pi Pico**, para exibir números de **0 a 9** em uma matriz de LEDs **5x5 WS2812**, controlada por dois botões físicos. **O projeto inclui:**
 > - Controle para alternar entre os números utilizando botões.
 > - Ajuste de luminosidade para evitar brilho excessivo.
 > - Implementação de **debounce** nos botões para garantir precisão.
@@ -33,6 +33,18 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 ### 🔹 [Atividade 2 - Parte 2: Sequência de Cores e Controle via Botão (29/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T5-ClockTemp-Ativ3)
 
 > **Descrição:** Extensão da Atividade 2, adicionando **controle de cores** para LEDs RGB na plataforma **BitDogLab**. O sistema exibe a sequência de transições **branco → roxo → vermelho → apagado**, garantindo que apenas um ciclo seja executado por vez.
+
+### 🔹 [Atividade 3 - Comunicação Serial e Controle de Periféricos UART/I2C (03/02)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T6-UART-I2C-LED)
+
+> **Descrição:** Esta atividade visa consolidar o conhecimento sobre **comunicação serial (UART e I2C)** no **RP2040**, utilizando a placa **BitDogLab**. O projeto integra o controle de LEDs comuns, **LEDs endereçáveis WS2812**, botões de acionamento com **interrupções e debounce**, e exibição de caracteres no **display SSD1306**. **O projeto inclui:**  
+> - **Recebimento de caracteres via Serial Monitor (VS Code)** e exibição no display SSD1306.  
+> - **Exibição de números na matriz de LEDs 5x5 WS2812** quando um número entre 0 e 9 for digitado.  
+> - **Controle do LED RGB:**  
+>   - **Botão A (GPIO 5):** Alterna o estado do LED Verde e exibe a atualização no **display e Serial Monitor**.  
+>   - **Botão B (GPIO 6):** Alterna o estado do LED Azul e exibe a atualização no **display e Serial Monitor**.  
+> - **Modificação da biblioteca font.h** para incluir caracteres minúsculos.  
+> - **Uso de interrupções (IRQ) para os botões** e **implementação de debounce via software**.  
+> - **Código organizado e comentado**, garantindo clareza e boas práticas de programação.  
 
 ---
 
