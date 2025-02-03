@@ -85,6 +85,3 @@ Este projeto implementa um **sistema de semáforo utilizando o Raspberry Pi Pico
 - O **delay inicial de 2000ms** (`sleep_ms(2000);`) evita problemas na comunicação serial.
 - A troca de LEDs é gerenciada **exclusivamente pelo temporizador**.
 - A comunicação serial imprime mensagens a cada **1 segundo** para facilitar a depuração.
-
-Este projeto segue os requisitos estabelecidos e pode ser utilizado para estudos e aplicações práticas em sistemas embarcados. 🚦
-
