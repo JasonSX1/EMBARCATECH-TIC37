@@ -8,6 +8,14 @@
 
 ---
 
+### 🎥 **Demonstração do Projeto**
+
+Para ver o funcionamento do projeto, assista ao vídeo de demonstração disponível em:
+
+🔗 **[Link do vídeo no YouTube](https://youtu.be/5MUQSoWPf3s)**
+
+---
+
 ## Descrição do Projeto
 
 Este projeto explora a **comunicação serial (UART e I2C)** e o **controle de hardware** com o **Raspberry Pi Pico W**, integrando **entrada de dados via PC, exibição em display OLED SSD1306 e controle de LEDs endereçáveis WS2812 e LEDs RGB**. O objetivo é demonstrar a aplicação prática dos conceitos de **interrupções, debounce de botões e comunicação serial**.
@@ -123,9 +131,5 @@ Este projeto explora a **comunicação serial (UART e I2C)** e o **controle de h
 
 ---
 
-### 🎥 **Demonstração do Projeto**
 
-Para ver o funcionamento do projeto, assista ao vídeo de demonstração disponível em:
-
-🔗 **[Link do vídeo no YouTube ou Google Drive](INSERIR_LINK_AQUI)**
 
