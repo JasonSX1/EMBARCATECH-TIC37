@@ -1,5 +1,3 @@
-# Generated Cmake Pico project file
-
 cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
@@ -35,7 +33,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(U4-T6-UART-I2C-LED U4-T6-UART-I2C-LED.c )
+add_executable(U4-T6-UART-I2C-LED U4-T6-UART-I2C-LED.c inc/ssd1306.c)
 
 pico_set_program_name(U4-T6-UART-I2C-LED "U4-T6-UART-I2C-LED")
 pico_set_program_version(U4-T6-UART-I2C-LED "0.1")
@@ -44,18 +42,26 @@ pico_set_program_version(U4-T6-UART-I2C-LED "0.1")
 pico_enable_stdio_uart(U4-T6-UART-I2C-LED 1)
 pico_enable_stdio_usb(U4-T6-UART-I2C-LED 1)
 
+# Generate PIO header
+pico_generate_pio_header(U4-T6-UART-I2C-LED ${CMAKE_CURRENT_LIST_DIR}/ws2812b.pio)
+
 # Add the standard library to the build
 target_link_libraries(U4-T6-UART-I2C-LED
-        pico_stdlib)
+        pico_stdlib
+        hardware_pio
+        hardware_adc
+        pico_bootrom
+        hardware_i2c)
 
 # Add the standard include files to the build
 target_include_directories(U4-T6-UART-I2C-LED PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/inc
 )
 
 # Add any user requested libraries
 target_link_libraries(U4-T6-UART-I2C-LED 
-        
+        hardware_i2c
         )
 
 pico_add_extra_outputs(U4-T6-UART-I2C-LED)
