@@ -46,7 +46,8 @@ pico_enable_stdio_usb(U4-T7-PWM-SERVO 1)
 
 # Add the standard library to the build
 target_link_libraries(U4-T7-PWM-SERVO
-        pico_stdlib)
+        pico_stdlib
+        hardware_pwm)
 
 # Add the standard include files to the build
 target_include_directories(U4-T7-PWM-SERVO PRIVATE

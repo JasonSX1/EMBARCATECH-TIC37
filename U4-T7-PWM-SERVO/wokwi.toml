@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = './build/U4-T7-PWM-SERVO.uf2'
+elf = './build/U4-T7-PWM-SERVO.elf'
