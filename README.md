@@ -46,6 +46,13 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 > - **Uso de interrupções (IRQ) para os botões** e **implementação de debounce via software**.  
 > - **Código organizado e comentado**, garantindo clareza e boas práticas de programação.  
 
+### 🔹 [Atividade 4 - Controle de Servomotor com PWM (10/02)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T7-PWM-SERVO)
+
+> **Descrição:** Implementação de um sistema para controle de um **servomotor** utilizando **PWM (Pulse Width Modulation)** no **RP2040**. O projeto permite movimentar o servo em diferentes ângulos de forma precisa e suave.  
+> - Configuração do **PWM na GPIO 22** com uma frequência de 50Hz, ideal para servomotores.  
+> - Controle do servo para posicionamento em **0°, 90° e 180°**, ajustando o ciclo de trabalho do sinal PWM.  
+> - Implementação de um deslocamento progressivo entre os ângulos, proporcionando transições mais suaves.  
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
