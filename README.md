@@ -18,7 +18,7 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 
 ## Unidade 4:
 
-### 🔹 [Atividade 1 - Exibição de Números em uma Matriz de LEDs 5x5 (27/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4T4-WLS)
+### 🔹 [Atividade 1 - Exibição de Números em uma Matriz de LEDs 5x5 (27/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T4-WLS)
 
 > **Descrição:** Implementação de um sistema utilizando o **simulador Wokwi** e o **Raspberry Pi Pico**, para exibir números de **0 a 9** em uma matriz de LEDs **5x5 WS2812**, controlada por dois botões físicos. **O projeto inclui:**
 > - Controle para alternar entre os números utilizando botões.
@@ -28,11 +28,11 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 
 ### 🔹 [Atividade 2 - Parte 1: Temporizador de Um Disparo (One-Shot) (29/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T5-ClockTemp-Ativ2)
 
-> **Descrição:** Implementação de um **temporizador de um disparo** (`add_alarm_in_ms()`), onde um **botão** aciona a sequência de desligamento dos LEDs em intervalos de **3 segundos**. O sistema garante que um novo acionamento só possa ocorrer após a finalização do ciclo.
+> **Descrição:** Implementação de um **semáforo automatizado** utilizando um **temporizador de um disparo** (`add_alarm_in_ms()`). Quando um **botão** é pressionado, ele inicia uma sequência de troca de cores dos LEDs simulando um semáforo: **verde → amarelo → vermelho**, com intervalos de **3 segundos** entre as trocas. O sistema garante que um novo acionamento só possa ocorrer após a finalização do ciclo, evitando interrupções abruptas.
 
-### 🔹 [Atividade 2 - Parte 2: Sequência de Cores e Controle via Botão (29/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T5-ClockTemp-Ativ3)
+### 🔹 [Atividade 2 - Parte 2: Sequência de Cores e Controle via Botão (29/01)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T5-ClockTemp-Ativ2)
 
-> **Descrição:** Extensão da Atividade 2, adicionando **controle de cores** para LEDs RGB na plataforma **BitDogLab**. O sistema exibe a sequência de transições **branco → roxo → vermelho → apagado**, garantindo que apenas um ciclo seja executado por vez.
+> **Descrição:** Extensão da Atividade 2, adicionando um **sistema de controle de iluminação RGB** utilizando **BitDogLab**. Ao pressionar um botão, uma sequência de cores é executada nos LEDs RGB na seguinte ordem: **branco → roxo → vermelho → apagado**. O sistema assegura que a sequência aconteça **uma única vez por acionamento**, impedindo ciclos contínuos e garantindo um funcionamento previsível.
 
 ### 🔹 [Atividade 3 - Comunicação Serial e Controle de Periféricos UART/I2C (03/02)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T6-UART-I2C-LED)
 
