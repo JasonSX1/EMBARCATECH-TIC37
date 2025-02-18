@@ -239,10 +239,12 @@
       [ "rgb21:VSS", "bb1:bn.50", "black", [ "v-29.7", "h-154.4", "v145.3" ] ],
       [ "pico:GP6", "btn1:2.l", "cyan", [ "v-57.6", "h-115.2", "v-249.6" ] ],
       [ "bb1:bp.48", "joystick1:VCC", "red", [ "v0" ] ],
-      [ "joystick1:VERT", "pico:GP26", "gray", [ "v307.2", "h-134.4" ] ],
-      [ "joystick1:HORZ", "pico:GP27", "gray", [ "v316.8", "h-134.4" ] ],
+      [ "joystick1:VERT", "pico:GP26", "gold", [ "v307.2", "h-134.4" ] ],
+      [ "joystick1:HORZ", "pico:GP27", "orange", [ "v316.8", "h-134.4" ] ],
       [ "joystick1:SEL", "pico:GP22", "gray", [ "v297.6", "h-172.8" ] ],
       [ "joystick1:GND", "bb1:bn.50", "black", [ "v0" ] ],
+      [ "oled1:VCC", "bb1:bp.17", "red", [ "v0" ] ],
+      [ "oled1:GND", "bb1:bn.16", "black", [ "v0" ] ],
       [ "btn1:1.l", "bb1:tp.31", "", [ "$bb" ] ],
       [ "btn1:2.l", "bb1:tp.30", "", [ "$bb" ] ],
       [ "btn1:1.r", "bb1:39t.d", "", [ "$bb" ] ],
@@ -261,9 +263,7 @@
       [ "joystick1:GND", "bb1:63b.f", "", [ "$bb" ] ],
       [ "r1:2", "bb1:50t.a", "", [ "$bb" ] ],
       [ "r4:2", "bb1:53t.a", "", [ "$bb" ] ],
-      [ "r5:2", "bb1:47t.a", "", [ "$bb" ] ],
-      [ "oled1:VCC", "bb1:bp.17", "red", [ "v0" ] ],
-      [ "oled1:GND", "bb1:bn.16", "black", [ "v0" ] ]
+      [ "r5:2", "bb1:47t.a", "", [ "$bb" ] ]
     ],
     "dependencies": {}
   }
