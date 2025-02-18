@@ -50,7 +50,21 @@ As atividades estão organizadas em sub-repositórios, conforme o cronograma de 
 > **Descrição:** Implementação de um sistema para controle de um **servomotor** utilizando **PWM (Pulse Width Modulation)** no **RP2040**. O projeto permite movimentar o servo em diferentes ângulos de forma precisa e suave.  
 > - Configuração do **PWM na GPIO 22** com uma frequência de 50Hz, ideal para servomotores.  
 > - Controle do servo para posicionamento em **0°, 90° e 180°**, ajustando o ciclo de trabalho do sinal PWM.  
-> - Implementação de um deslocamento progressivo entre os ângulos, proporcionando transições mais suaves.  
+> - Implementação de um deslocamento progressivo entre os ângulos, proporcionando transições mais suaves.
+
+### 🔹 [Atividade 5 - Controle de LEDs RGB e Display via Joystick (18/02)](https://github.com/JasonSX1/EMBARCATECH-TIC37/tree/main/U4-T8-Joystick-ADC)
+
+> **Descrição:** Implementação de um sistema que utiliza um **joystick analógico** para controlar a intensidade de **LEDs RGB** e movimentar um **quadrado no display SSD1306**, explorando o uso do **Conversor Analógico-Digital (ADC)** e **PWM** no **RP2040**. **O projeto inclui:**  
+> - **Controle de LEDs RGB via Joystick:**  
+>   - O LED **Azul** ajusta seu brilho conforme o eixo Y do joystick.  
+>   - O LED **Vermelho** ajusta seu brilho conforme o eixo X do joystick.  
+>   - LEDs controlados por **PWM**, permitindo variação suave da intensidade luminosa.  
+> - **Movimentação de um quadrado de 8x8 pixels no Display SSD1306**, representando a posição do joystick.  
+> - **Botões com funcionalidades extras:**  
+>   - **Botão do Joystick:** Alterna o estado do **LED Verde** e modifica a borda do display.  
+>   - **Botão A:** Liga/desliga o controle dos LEDs via PWM.  
+> - **Uso de interrupções (IRQ) para os botões** e **implementação de debounce via software**.  
+> - **Comunicação via I2C** para o controle do display OLED **SSD1306**.  
 
 ---
 
