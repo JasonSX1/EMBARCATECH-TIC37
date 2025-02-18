@@ -55,8 +55,8 @@ target_include_directories(U4-T8-Joystick-ADC PRIVATE
 
 # Add any user requested libraries
 target_link_libraries(U4-T8-Joystick-ADC 
-        
-        )
+        pico_stdlib
+        hardware_pwm)
 
 pico_add_extra_outputs(U4-T8-Joystick-ADC)
 
