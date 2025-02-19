@@ -12,6 +12,7 @@
 #define LED_R 13
 #define BUTTON_JOY 22
 #define BUTTON_A 5
+#define BUTTON_B 6
 #define VX_JOY 26
 #define VY_JOY 27
 #define I2C_PORT i2c1
@@ -72,6 +73,8 @@ void button_isr(uint gpio, uint32_t events) {
     } else if (gpio == BUTTON_JOY) {
         gpio_put(LED_G, !gpio_get(LED_G));  // Liga/desliga LED Verde sem interferir nos outros
         border_type = border_type == 'B' ? 'A' : border_type + 1;
+    } else if (gpio == BUTTON_B) {
+        reset_usb_boot(0, 0);
     }
 }
 
@@ -96,6 +99,7 @@ int main() {
     setup_pwm(LED_R);
     setup_gpio(BUTTON_JOY, false);
     setup_gpio(BUTTON_A, false);
+    setup_gpio(BUTTON_B, false);
 
     // Configuração do display
     if (!setup_display()) {
@@ -105,6 +109,7 @@ int main() {
 
     gpio_set_irq_enabled_with_callback(BUTTON_A, GPIO_IRQ_EDGE_FALL, true, button_isr);
     gpio_set_irq_enabled_with_callback(BUTTON_JOY, GPIO_IRQ_EDGE_FALL, true, button_isr);
+    gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);
 
     while (true) {
         // Leitura do Joystick
