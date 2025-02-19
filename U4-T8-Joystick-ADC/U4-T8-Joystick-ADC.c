@@ -6,6 +6,7 @@
 #include "hardware/pwm.h"
 #include "inc/ssd1306.h"
 #include "inc/font.h"
+
 // Definição dos pinos
 #define LED_G 11
 #define LED_B 12
@@ -21,7 +22,7 @@
 #define I2C_ADDR 0x3C
 
 #define CENTER 2048  // Valor médio esperado do joystick
-#define DEADZONE 0  // Zona morta para evitar ativação indesejada
+#define DEADZONE 1  // Zona morta para evitar ativação indesejada
 
 // Configurações PWM
 #define DIVIDER_PWM 100
