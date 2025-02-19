@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(U4-T8-Joystick-ADC U4-T8-Joystick-ADC.c )
+add_executable(U4-T8-Joystick-ADC U4-T8-Joystick-ADC.c inc/ssd1306.c)
 
 pico_set_program_name(U4-T8-Joystick-ADC "U4-T8-Joystick-ADC")
 pico_set_program_version(U4-T8-Joystick-ADC "0.1")
@@ -46,7 +46,11 @@ pico_enable_stdio_usb(U4-T8-Joystick-ADC 1)
 
 # Add the standard library to the build
 target_link_libraries(U4-T8-Joystick-ADC
-        pico_stdlib)
+        pico_stdlib
+        hardware_adc 
+        hardware_pwm
+        hardware_i2c
+        pico_bootrom)
 
 # Add the standard include files to the build
 target_include_directories(U4-T8-Joystick-ADC PRIVATE
@@ -56,7 +60,10 @@ target_include_directories(U4-T8-Joystick-ADC PRIVATE
 # Add any user requested libraries
 target_link_libraries(U4-T8-Joystick-ADC 
         pico_stdlib
-        hardware_pwm)
+        hardware_adc 
+        hardware_pwm
+        hardware_i2c
+        pico_bootrom)
 
 pico_add_extra_outputs(U4-T8-Joystick-ADC)
 
