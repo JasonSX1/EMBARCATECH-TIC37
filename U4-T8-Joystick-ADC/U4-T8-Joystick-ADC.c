@@ -19,6 +19,9 @@
 #define I2C_SCL 15
 #define I2C_ADDR 0x3C
 
+#define CENTER 2048  // Valor médio esperado do joystick
+#define DEADZONE 0  // Zona morta para evitar ativação indesejada
+
 // Configurações PWM
 #define DIVIDER_PWM 100
 #define WRAP_PERIOD 20000
@@ -61,13 +64,13 @@ void button_isr(uint gpio, uint32_t events) {
     uint32_t current_time = to_us_since_boot(get_absolute_time());
     if (current_time - last_press_time < 300000) return;
     last_press_time = current_time;
-    
+
     if (gpio == BUTTON_A) {
         leds_enabled = !leds_enabled;
         pwm_set_gpio_level(LED_B, 0);
         pwm_set_gpio_level(LED_R, 0);
     } else if (gpio == BUTTON_JOY) {
-        gpio_put(LED_G, !gpio_get(LED_G));
+        gpio_put(LED_G, !gpio_get(LED_G));  // Liga/desliga LED Verde sem interferir nos outros
         border_type = border_type == 'B' ? 'A' : border_type + 1;
     }
 }
@@ -110,13 +113,13 @@ int main() {
         adc_select_input(0);
         uint16_t y_value = adc_read();
 
-        // Normaliza os valores para que direita seja direita e esquerda seja esquerda
-        uint x_pos = (x_value * 120) / 4095;  // Mantém a inversão corrigida
-        uint y_pos = 56 - ((y_value * 56) / 4095);  // Já estava certo        
+        // Normaliza os valores para posição do display
+        uint x_pos = (x_value * 120) / 4095;
+        uint y_pos = 56 - ((y_value * 56) / 4095);
 
         // Atualiza display
         ssd1306_fill(&ssd, false);
-        
+
         // Desenho das bordas
         switch (border_type) {
             case 'A': 
@@ -130,23 +133,47 @@ int main() {
                 ssd1306_pixel(&ssd, 122, 60, true);
                 break;
             case 'B': 
-                ssd1306_rect(&ssd, 1, 1, 126, 62, true, false); 
+                // Linha tracejada superior
+                for (int x = 1; x < 126; x += 4) {
+                    ssd1306_hline(&ssd, x, x + 2, 1, true);
+                }
+                // Linha tracejada inferior
+                for (int x = 1; x < 126; x += 4) {
+                    ssd1306_hline(&ssd, x, x + 2, 62, true);
+                }
+                // Linha tracejada esquerda
+                for (int y = 1; y < 62; y += 4) {
+                    ssd1306_vline(&ssd, 1, y, y + 2, true);
+                }
+                // Linha tracejada direita
+                for (int y = 1; y < 62; y += 4) {
+                    ssd1306_vline(&ssd, 126, y, y + 2, true);
+                }
                 break;
+            
         }
-        
+
         // Desenha quadrado que representa o joystick
         ssd1306_rect(&ssd, y_pos, x_pos, 8, 8, true, true);
         ssd1306_send_data(&ssd);
 
         // Atualiza LEDs RGB conforme posição do joystick
         if (leds_enabled) {
-            uint16_t levelX = (x_value * WRAP_PERIOD) / 4095;
-            uint16_t levelY = (y_value * WRAP_PERIOD) / 4095;            
-            // Garante que os valores estejam no intervalo correto
-            if (levelX < 0) levelX = 0;
-            if (levelY < 0) levelY = 0;        
-            pwm_set_gpio_level(LED_B, levelY);
-            pwm_set_gpio_level(LED_R, levelX);
+            pwm_set_gpio_level(LED_B, 0);
+            pwm_set_gpio_level(LED_R, 0);
+
+            // **Correção dos eixos dos LEDs**
+            if (x_value > CENTER + DEADZONE) {  // Direita -> Liga Vermelho
+                pwm_set_gpio_level(LED_R, ((x_value - CENTER) * WRAP_PERIOD) / (4095 - CENTER));
+            } else if (x_value < CENTER - DEADZONE) {  // Esquerda -> Liga Vermelho
+                pwm_set_gpio_level(LED_R, ((CENTER - x_value) * WRAP_PERIOD) / CENTER);
+            } 
+
+            if (y_value > CENTER + DEADZONE) {  // Cima -> Liga Azul
+                pwm_set_gpio_level(LED_B, ((y_value - CENTER) * WRAP_PERIOD) / (4095 - CENTER));
+            } else if (y_value < CENTER - DEADZONE) {  // Baixo -> Liga Azul
+                pwm_set_gpio_level(LED_B, ((CENTER - y_value) * WRAP_PERIOD) / CENTER);
+            }
         }
 
         sleep_ms(10);
