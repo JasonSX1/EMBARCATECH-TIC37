@@ -21,7 +21,7 @@
 
 // Configurações PWM
 #define DIVIDER_PWM 100
-#define WRAP_PERIOD 24999
+#define WRAP_PERIOD 20000
 
 // Estrutura do display
 ssd1306_t ssd;
@@ -68,7 +68,7 @@ void button_isr(uint gpio, uint32_t events) {
         pwm_set_gpio_level(LED_R, 0);
     } else if (gpio == BUTTON_JOY) {
         gpio_put(LED_G, !gpio_get(LED_G));
-        border_type = border_type == 'E' ? 'A' : border_type + 1;
+        border_type = border_type == 'B' ? 'A' : border_type + 1;
     }
 }
 
@@ -105,14 +105,14 @@ int main() {
 
     while (true) {
         // Leitura do Joystick
-        adc_select_input(0);
-        uint16_t x_value = adc_read();
         adc_select_input(1);
+        uint16_t x_value = adc_read();
+        adc_select_input(0);
         uint16_t y_value = adc_read();
 
         // Normaliza os valores para que direita seja direita e esquerda seja esquerda
-        uint x_pos = (x_value * 120) / 4096;
-        uint y_pos = (y_value * 56) / 4096;
+        uint x_pos = (x_value * 120) / 4095;  // Mantém a inversão corrigida
+        uint y_pos = 56 - ((y_value * 56) / 4095);  // Já estava certo        
 
         // Atualiza display
         ssd1306_fill(&ssd, false);
@@ -120,22 +120,16 @@ int main() {
         // Desenho das bordas
         switch (border_type) {
             case 'A': 
-                ssd1306_hline(&ssd, 4, 124, 1, true); 
-                ssd1306_hline(&ssd, 4, 124, 63, true); 
+                ssd1306_hline(&ssd, 6, 122, 2, true); 
+                ssd1306_hline(&ssd, 6, 122, 61, true);
+                ssd1306_vline(&ssd, 2, 4, 60, true);
+                ssd1306_vline(&ssd, 125, 4, 60, true);
+                ssd1306_pixel(&ssd, 5, 3, true);
+                ssd1306_pixel(&ssd, 122, 3, true);
+                ssd1306_pixel(&ssd, 5, 60, true);
+                ssd1306_pixel(&ssd, 122, 60, true);
                 break;
             case 'B': 
-                ssd1306_vline(&ssd, 1, 0, 63, true); 
-                ssd1306_vline(&ssd, 126, 0, 63, true); 
-                break;
-            case 'C': 
-                ssd1306_hline(&ssd, 4, 124, 1, true); 
-                ssd1306_vline(&ssd, 126, 0, 63, true); 
-                break;
-            case 'D': 
-                ssd1306_hline(&ssd, 4, 124, 63, true); 
-                ssd1306_vline(&ssd, 1, 0, 63, true); 
-                break;
-            case 'E': 
                 ssd1306_rect(&ssd, 1, 1, 126, 62, true, false); 
                 break;
         }
@@ -146,8 +140,11 @@ int main() {
 
         // Atualiza LEDs RGB conforme posição do joystick
         if (leds_enabled) {
-            uint16_t levelX = (x_value * WRAP_PERIOD) / 4096;
-            uint16_t levelY = (y_value * WRAP_PERIOD) / 4096;
+            uint16_t levelX = (x_value * WRAP_PERIOD) / 4095;
+            uint16_t levelY = (y_value * WRAP_PERIOD) / 4095;            
+            // Garante que os valores estejam no intervalo correto
+            if (levelX < 0) levelX = 0;
+            if (levelY < 0) levelY = 0;        
             pwm_set_gpio_level(LED_B, levelY);
             pwm_set_gpio_level(LED_R, levelX);
         }
