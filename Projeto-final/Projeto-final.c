@@ -15,8 +15,14 @@
 #define OLED_ADDRESS 0x3C
 #define DURACAO_MEDICAO 60000 // 1 minuto em milissegundos
 #define POLLING_RATE 1 // Polling mais rápido para capturar mudanças
+#define TIMEOUT_FREQUENCIA 500 // Tempo limite para resetar a frequência
+#define MEDIA_MOVEL 5 // Número de amostras para suavização
 
 ssd1306_t display;
+uint32_t tempo_ultimo_pulso = 0;
+float frequencia_instantanea = 0;
+float historico_frequencias[MEDIA_MOVEL] = {0};
+int indice_frequencia = 0;
 
 void iniciar_sinal_pwm(uint gpio, uint freq, uint duty_cycle) {
     gpio_set_function(gpio, GPIO_FUNC_PWM);
@@ -33,6 +39,30 @@ void atualizar_display(const char *mensagem) {
     ssd1306_send_data(&display);
 }
 
+void medir_frequencia_instantanea() {
+    uint32_t tempo_atual = to_us_since_boot(get_absolute_time());
+    static uint32_t tempo_anterior = 0;
+
+    if (gpio_get(GPIO_RECEPCAO) == 1) {
+        if (tempo_anterior != 0) {
+            uint32_t periodo = tempo_atual - tempo_anterior;
+            if (periodo > 0) {
+                float freq_atual = 1000000.0 / periodo; // Convertendo período para frequência em Hz
+                historico_frequencias[indice_frequencia] = freq_atual;
+                indice_frequencia = (indice_frequencia + 1) % MEDIA_MOVEL;
+
+                float soma = 0;
+                for (int i = 0; i < MEDIA_MOVEL; i++) {
+                    soma += historico_frequencias[i];
+                }
+                frequencia_instantanea = soma / MEDIA_MOVEL; // Média móvel para suavizar valores
+            }
+        }
+        tempo_anterior = tempo_atual;
+        tempo_ultimo_pulso = to_ms_since_boot(get_absolute_time()); // Atualiza tempo da última detecção
+    }
+}
+
 void iniciar_medicao() {
     printf("Iniciando medicao...\n");
     sleep_ms(100);
@@ -42,8 +72,7 @@ void iniciar_medicao() {
     gpio_set_dir(GPIO_RECEPCAO, GPIO_IN);
 
     uint32_t tempo_inicio = to_ms_since_boot(get_absolute_time());
-    uint32_t tempo_atual, tempo_ultimo_pulso = tempo_inicio;
-    uint32_t pulso_contador = 0;
+    uint32_t tempo_atual;
     char buffer[64];
 
     while (true) {
@@ -55,14 +84,14 @@ void iniciar_medicao() {
             break;
         }
 
-        int estado_atual = gpio_get(GPIO_RECEPCAO);
-        if (estado_atual == 1) {
-            pulso_contador++;
-            tempo_ultimo_pulso = tempo_atual;
+        medir_frequencia_instantanea();
+        
+        // Se o último pulso foi há muito tempo, definir a frequência como 0
+        if (tempo_atual - tempo_ultimo_pulso > TIMEOUT_FREQUENCIA) {
+            frequencia_instantanea = 0;
         }
 
-        float frequencia_recebida = pulso_contador / ((tempo_atual - tempo_inicio) / 1000.0);
-        snprintf(buffer, sizeof(buffer), "Freq Enviada: 1000Hz\nFreq Rec: %.2fHz", frequencia_recebida);
+        snprintf(buffer, sizeof(buffer), "Freq Enviada: 1000Hz\nFreq Rec: %.2fHz", frequencia_instantanea);
         printf("%s\n", buffer);
         atualizar_display(buffer);
         sleep_ms(POLLING_RATE);
