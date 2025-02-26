@@ -14,6 +14,7 @@
 #define I2C_SCL 15
 #define OLED_ADDRESS 0x3C
 #define DURACAO_MEDICAO 60000 // 1 minuto em milissegundos
+#define POLLING_RATE 1 // Polling mais rápido para capturar mudanças
 
 ssd1306_t display;
 
@@ -41,8 +42,9 @@ void iniciar_medicao() {
     gpio_set_dir(GPIO_RECEPCAO, GPIO_IN);
 
     uint32_t tempo_inicio = to_ms_since_boot(get_absolute_time());
-    uint32_t tempo_atual;
-    char buffer[32];
+    uint32_t tempo_atual, tempo_ultimo_pulso = tempo_inicio;
+    uint32_t pulso_contador = 0;
+    char buffer[64];
 
     while (true) {
         tempo_atual = to_ms_since_boot(get_absolute_time());
@@ -53,11 +55,17 @@ void iniciar_medicao() {
             break;
         }
 
-        int estado_recebido = gpio_get(GPIO_RECEPCAO);
-        snprintf(buffer, sizeof(buffer), "Freq: 1000Hz\nRecebido: %d", estado_recebido);
+        int estado_atual = gpio_get(GPIO_RECEPCAO);
+        if (estado_atual == 1) {
+            pulso_contador++;
+            tempo_ultimo_pulso = tempo_atual;
+        }
+
+        float frequencia_recebida = pulso_contador / ((tempo_atual - tempo_inicio) / 1000.0);
+        snprintf(buffer, sizeof(buffer), "Freq Enviada: 1000Hz\nFreq Rec: %.2fHz", frequencia_recebida);
         printf("%s\n", buffer);
         atualizar_display(buffer);
-        sleep_ms(1000);
+        sleep_ms(POLLING_RATE);
     }
 }
 
