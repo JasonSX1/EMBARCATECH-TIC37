@@ -16,7 +16,7 @@ bool update_display = true;
 
 // Opções do menu
 const char *menu_options[] = {
-    "Medir Bioimpedancia",
+    "Med Bioimped",
     "Configuracoes",
     "Sobre"
 };
