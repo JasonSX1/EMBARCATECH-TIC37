@@ -15,6 +15,7 @@ typedef enum {
 // Declaração das variáveis globais (apenas como referência, sem definir!)
 extern MenuState menu_state;
 extern bool update_display;
+extern int menu_index;
 
 // Funções do menu
 void init_buttons();

@@ -24,7 +24,7 @@ ssd1306_t ssd;
 
 // Variáveis globais
 static volatile uint32_t last_press_time = 0;
-static int menu_index = 0;
+int menu_index = 0;
 extern const char *menu_options[];
 extern const int MENU_SIZE;
 
@@ -57,19 +57,6 @@ void draw_indicator(ssd1306_t *ssd, int index) {
     ssd1306_send_data(ssd);
 }
 
-void draw_menu(ssd1306_t *ssd) {
-    ssd1306_fill(ssd, false);  // Limpa a tela
-    ssd1306_draw_string(ssd, "MENU:", 10, 0);
-
-    // Desenha as opções do menu
-    for (int i = 0; i < MENU_SIZE; i++) {
-        ssd1306_draw_string(ssd, menu_options[i], 20, 15 + (i * 12));
-    }
-
-    // Desenha o indicador da opção selecionada
-    draw_indicator(ssd, menu_index);
-}
-
 // Leitura do joystick para navegação no menu
 void read_joystick() {
     static uint16_t last_y_value = CENTER;
@@ -84,9 +71,11 @@ void read_joystick() {
     if (abs(y_value - last_y_value) > DEADZONE) {
         if (y_value < CENTER - DEADZONE) {  // Agora desce corretamente
             menu_index = (menu_index + 1) % MENU_SIZE;
+            printf("Opção de menu selecionada: %d\n", menu_index);  // Log da opção selecionada
             update_display = true;
         } else if (y_value > CENTER + DEADZONE) {  // Agora sobe corretamente
             menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
+            printf("Opção de menu selecionada: %d\n", menu_index);  // Log da opção selecionada
             update_display = true;
         }
         last_y_value = y_value;
@@ -118,7 +107,7 @@ void button_isr(uint gpio, uint32_t events) {
         menu_state = MENU_PRINCIPAL; // Retorna ao menu principal
         menu_index = 0; // Reseta a seleção para o primeiro item
         update_display = true;
-        draw_menu(&ssd);
+        update_menu_display(&ssd);
     }
     if (gpio == BUTTON_B) {
         reset_usb_boot(0, 0);
@@ -157,7 +146,7 @@ int main() {
     
         if (update_display) {
             printf("Atualizando menu. Índice: %d\n", menu_index);
-            draw_menu(&ssd);
+            update_menu_display(&ssd);
             update_display = false;
         }
     

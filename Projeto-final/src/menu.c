@@ -11,17 +11,9 @@
 
 // Estado atual do menu
 MenuState menu_state = MENU_PRINCIPAL;
-int selected_option = 0;
 bool update_display = true;
 
-// Opções do menu
-const char *menu_options[] = {
-    "Med Bioimped",
-    "Configuracoes",
-    "Sobre"
-};
-
-const int MENU_SIZE = sizeof(menu_options) / sizeof(menu_options[0]);
+const int MENU_SIZE = 3;
 
 // Inicializa os botões e suas interrupções
 void init_buttons() {
@@ -43,14 +35,14 @@ void init_buttons() {
 
 void on_button_up() {
     if (menu_state == MENU_PRINCIPAL) {
-        selected_option = (selected_option - 1 + MENU_SIZE) % MENU_SIZE;
+        menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
         update_display = true;
     }
 }
 
 void on_button_down() {
     if (menu_state == MENU_PRINCIPAL) {
-        selected_option = (selected_option + 1) % MENU_SIZE;
+        menu_index = (menu_index + 1) % MENU_SIZE;
         update_display = true;
     }
 }
@@ -58,7 +50,7 @@ void on_button_down() {
 void on_button_select() {
     switch (menu_state) {
         case MENU_PRINCIPAL:
-            switch (selected_option) {
+            switch (menu_index) {
                 case 0:
                     menu_state = MENU_MEDIR;
                     break;
@@ -83,12 +75,26 @@ void update_menu_display(ssd1306_t *ssd) {
 
     switch (menu_state) {
         case MENU_PRINCIPAL:
-            ssd1306_draw_string(ssd, "MENU:", 10, 0);
             for (int i = 0; i < MENU_SIZE; i++) {
-                if (i == selected_option) {
-                    ssd1306_draw_string(ssd, "> ", 5, 15 + (i * 12));
+                ssd1306_draw_string(ssd, "Med Bioimped", 20, 4);
+                ssd1306_draw_string(ssd, "Configuracoes", 20, 20);
+                ssd1306_draw_string(ssd, "Sobre", 20, 32);
+    
+                // Alterna entre as opções destacadas no display
+                if (menu_index == 0) {
+                    ssd1306_rect(ssd, 0, 0, 128, 16, true, false);
+                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
+                } else if (menu_index == 1) {
+                    ssd1306_rect(ssd, 0, 9, 128, 16, true, false);
+                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
+                } else if (menu_index == 2) {
+                    ssd1306_rect(ssd, 0, 48, 128, 16, true, false);
+                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada                    
+                } else {
+                    ssd1306_rect(ssd, 0, 32, 128, 16, true, false);
+                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
                 }
-                ssd1306_draw_string(ssd, menu_options[i], 20, 15 + (i * 12));
+                ssd1306_send_data(ssd);
             }
             break;
         case MENU_MEDIR:
@@ -103,4 +109,5 @@ void update_menu_display(ssd1306_t *ssd) {
             break;
     }
     ssd1306_send_data(ssd);
+    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
 }
