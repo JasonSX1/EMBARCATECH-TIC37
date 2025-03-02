@@ -3,6 +3,7 @@
 #include "hardware/gpio.h"
 #include "inc/menu.h"
 #include "inc/ssd1306.h"
+#include "inc/terminais.h"
 
 // Definição dos pinos dos botões
 #define BUTTON_UP 5
@@ -46,6 +47,19 @@ void on_button_down() {
     }
 }
 
+void menu_medir(ssd1306_t *ssd) {
+    ssd1306_fill(ssd, false); // Limpa o display
+    ssd1306_send_data(ssd);
+
+    ssd1306_draw_string(ssd, "Modo: Medicao", 10, 10);
+    ssd1306_draw_string(ssd, "Pressione L3 p/ iniciar", 10, 20);
+
+    iniciar_medicao(); // Chama a função que gerencia a medição e exibe os dados
+    
+    ssd1306_send_data(ssd);
+}
+
+
 void on_button_select() {
     switch (menu_state) {
         case MENU_PRINCIPAL:
@@ -85,12 +99,15 @@ void update_menu_display(ssd1306_t *ssd) {
             int selecao_y_posicao = menu_index * altura_opcao;
             ssd1306_rect(ssd, selecao_y_posicao, 0, 128, altura_opcao, true, false);
             break;
+
         case MENU_MEDIR:
-            ssd1306_draw_string(ssd, "Modo: Medicao", 10, 20);
+            menu_medir(ssd);
             break;
+        
         case MENU_CONFIG:
             ssd1306_draw_string(ssd, "Configuracoes", 10, 20);
             break;
+
         case MENU_SOBRE:
             ssd1306_draw_string(ssd, "Sobre este projeto", 10, 10);
             ssd1306_draw_string(ssd, "Bioimpedancia V1.0", 10, 20);
