@@ -84,7 +84,6 @@ void update_menu_display(ssd1306_t *ssd) {
             // Desenha a caixa de seleção ao redor da opção selecionada
             int selecao_y_posicao = menu_index * altura_opcao;
             ssd1306_rect(ssd, selecao_y_posicao, 0, 128, altura_opcao, true, false);
-            printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);
             break;
         case MENU_MEDIR:
             ssd1306_draw_string(ssd, "Modo: Medicao", 10, 20);

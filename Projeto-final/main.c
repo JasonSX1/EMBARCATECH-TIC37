@@ -25,7 +25,6 @@ ssd1306_t ssd;
 // Variáveis globais
 static volatile uint32_t last_press_time = 0;
 int menu_index = 0;
-extern const char *menu_options[];
 extern const int MENU_SIZE;
 
 // Configuração de pinos
@@ -44,19 +43,6 @@ bool setup_display() {
     return true;
 }
 
-void draw_indicator(ssd1306_t *ssd, int index) {
-    // Primeiro, apaga qualquer seta antiga desenhando espaços na coluna da seta
-    for (int i = 0; i < MENU_SIZE; i++) {
-        ssd1306_draw_string(ssd, " ", 5, 15 + (i * 12));  // Apaga a seta antiga
-    }
-
-    // Agora, desenha a seta ">" na linha correta
-    ssd1306_draw_string(ssd, ">", 5, 15 + (index * 12));
-
-    // Atualiza o display
-    ssd1306_send_data(ssd);
-}
-
 // Leitura do joystick para navegação no menu
 void read_joystick() {
     static uint16_t last_y_value = CENTER;
@@ -69,13 +55,11 @@ void read_joystick() {
     if (current_time - last_move_time < 200) return; // Debounce de 200ms
 
     if (abs(y_value - last_y_value) > DEADZONE) {
-        if (y_value < CENTER - DEADZONE) {  // Agora desce corretamente
+        if (y_value < CENTER - DEADZONE) {
             menu_index = (menu_index + 1) % MENU_SIZE;
-            printf("Opção de menu selecionada: %d\n", menu_index);  // Log da opção selecionada
             update_display = true;
-        } else if (y_value > CENTER + DEADZONE) {  // Agora sobe corretamente
+        } else if (y_value > CENTER + DEADZONE) {
             menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
-            printf("Opção de menu selecionada: %d\n", menu_index);  // Log da opção selecionada
             update_display = true;
         }
         last_y_value = y_value;
@@ -105,7 +89,6 @@ void button_isr(uint gpio, uint32_t events) {
     }
     if (gpio == BUTTON_A) {
         menu_state = MENU_PRINCIPAL; // Retorna ao menu principal
-        menu_index = 0; // Reseta a seleção para o primeiro item
         update_display = true;
         update_menu_display(&ssd);
     }
@@ -145,7 +128,6 @@ int main() {
         read_joystick(); // Leitura do joystick
     
         if (update_display) {
-            printf("Atualizando menu. Índice: %d\n", menu_index);
             update_menu_display(&ssd);
             update_display = false;
         }
