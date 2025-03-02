@@ -17,7 +17,7 @@
 #define I2C_ADDR 0x3C
 
 #define CENTER 2048  // Valor médio esperado do joystick
-#define DEADZONE 200  // Margem para detectar movimento
+#define DEADZONE 400  // Margem para detectar movimento
 
 // Estrutura do display
 ssd1306_t ssd;
@@ -44,17 +44,30 @@ bool setup_display() {
     return true;
 }
 
-// Atualiza o menu na tela
-void draw_menu() {
-    ssd1306_fill(&ssd, false);
-    ssd1306_draw_string(&ssd, "MENU:", 10, 0);
+void draw_indicator(ssd1306_t *ssd, int index) {
+    // Primeiro, apaga qualquer seta antiga desenhando espaços na coluna da seta
     for (int i = 0; i < MENU_SIZE; i++) {
-        if (i == menu_index) {
-            ssd1306_draw_string(&ssd, ">", 5, 15 + (i * 12));  // Indicador de seleção
-        }
-        ssd1306_draw_string(&ssd, menu_options[i], 20, 15 + (i * 12));
+        ssd1306_draw_string(ssd, " ", 5, 15 + (i * 12));  // Apaga a seta antiga
     }
-    ssd1306_send_data(&ssd);
+
+    // Agora, desenha a seta ">" na linha correta
+    ssd1306_draw_string(ssd, ">", 5, 15 + (index * 12));
+
+    // Atualiza o display
+    ssd1306_send_data(ssd);
+}
+
+void draw_menu(ssd1306_t *ssd) {
+    ssd1306_fill(ssd, false);  // Limpa a tela
+    ssd1306_draw_string(ssd, "MENU:", 10, 0);
+
+    // Desenha as opções do menu
+    for (int i = 0; i < MENU_SIZE; i++) {
+        ssd1306_draw_string(ssd, menu_options[i], 20, 15 + (i * 12));
+    }
+
+    // Desenha o indicador da opção selecionada
+    draw_indicator(ssd, menu_index);
 }
 
 // Leitura do joystick para navegação no menu
@@ -65,14 +78,18 @@ void read_joystick() {
 
     if (abs(y_value - last_y_value) > DEADZONE) {
         if (y_value > CENTER + DEADZONE) {
-            menu_index = (menu_index + 1) % MENU_SIZE;
+            menu_index++;
+            if (menu_index >= MENU_SIZE) menu_index = 0; // Evita índice inválido
             update_display = true;
         } else if (y_value < CENTER - DEADZONE) {
-            menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
+            menu_index--;
+            if (menu_index < 0) menu_index = MENU_SIZE - 1; // Evita índice inválido
             update_display = true;
         }
         last_y_value = y_value;
     }
+
+    printf("menu_index: %d\n", menu_index); // Debug para confirmar mudanças
 }
 
 // Função de interrupção para seleção do menu
@@ -99,7 +116,7 @@ void button_isr(uint gpio, uint32_t events) {
         menu_state = MENU_PRINCIPAL; // Retorna ao menu principal
         menu_index = 0; // Reseta a seleção para o primeiro item
         update_display = true;
-        draw_menu();
+        draw_menu(&ssd);
     }
     if (gpio == BUTTON_B) {
         reset_usb_boot(0, 0);
@@ -135,10 +152,14 @@ int main() {
     
     while (true) {
         read_joystick(); // Leitura do joystick
+    
         if (update_display) {
-            update_menu_display(&ssd);
+            printf("Atualizando menu. Índice: %d\n", menu_index);
+            draw_menu(&ssd);
             update_display = false;
         }
+    
         sleep_ms(150);
     }
+    
 }
