@@ -66,11 +66,12 @@ void read_joystick() {
     if (abs(y_value - last_y_value) > DEADZONE) {
         if (y_value > CENTER + DEADZONE) {
             menu_index = (menu_index + 1) % MENU_SIZE;
+            update_display = true;
         } else if (y_value < CENTER - DEADZONE) {
             menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
+            update_display = true;
         }
         last_y_value = y_value;
-        update_display = true;
     }
 }
 
@@ -93,6 +94,12 @@ void button_isr(uint gpio, uint32_t events) {
                 break;
         }
         update_display = true;
+    }
+    if (gpio == BUTTON_A) {
+        menu_state = MENU_PRINCIPAL; // Retorna ao menu principal
+        menu_index = 0; // Reseta a seleção para o primeiro item
+        update_display = true;
+        draw_menu();
     }
     if (gpio == BUTTON_B) {
         reset_usb_boot(0, 0);
@@ -123,6 +130,7 @@ int main() {
     
     // Configura interrupções para os botões
     gpio_set_irq_enabled_with_callback(BUTTON_JOY, GPIO_IRQ_EDGE_FALL, true, button_isr);
+    gpio_set_irq_enabled_with_callback(BUTTON_A, GPIO_IRQ_EDGE_FALL, true, button_isr);
     gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);
     
     while (true) {
