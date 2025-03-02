@@ -73,23 +73,25 @@ void draw_menu(ssd1306_t *ssd) {
 // Leitura do joystick para navegação no menu
 void read_joystick() {
     static uint16_t last_y_value = CENTER;
+    static uint32_t last_move_time = 0;  // Debounce de tempo
+
     adc_select_input(0);
     uint16_t y_value = adc_read();
+    uint32_t current_time = to_ms_since_boot(get_absolute_time());
+
+    if (current_time - last_move_time < 200) return; // Debounce de 200ms
 
     if (abs(y_value - last_y_value) > DEADZONE) {
-        if (y_value > CENTER + DEADZONE) {
-            menu_index++;
-            if (menu_index >= MENU_SIZE) menu_index = 0; // Evita índice inválido
+        if (y_value < CENTER - DEADZONE) {  // Agora desce corretamente
+            menu_index = (menu_index + 1) % MENU_SIZE;
             update_display = true;
-        } else if (y_value < CENTER - DEADZONE) {
-            menu_index--;
-            if (menu_index < 0) menu_index = MENU_SIZE - 1; // Evita índice inválido
+        } else if (y_value > CENTER + DEADZONE) {  // Agora sobe corretamente
+            menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
             update_display = true;
         }
         last_y_value = y_value;
+        last_move_time = current_time;  // Atualiza tempo do último movimento
     }
-
-    printf("menu_index: %d\n", menu_index); // Debug para confirmar mudanças
 }
 
 // Função de interrupção para seleção do menu
