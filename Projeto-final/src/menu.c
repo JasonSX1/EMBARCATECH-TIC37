@@ -12,7 +12,6 @@
 // Estado atual do menu
 MenuState menu_state = MENU_PRINCIPAL;
 bool update_display = true;
-
 const int MENU_SIZE = 3;
 
 // Inicializa os botões e suas interrupções
@@ -70,32 +69,22 @@ void on_button_select() {
 }
 
 void update_menu_display(ssd1306_t *ssd) {
-    ssd1306_fill(ssd, false);
+    ssd1306_fill(ssd, false); // Limpa o display
     ssd1306_send_data(ssd);
+
+    const char *menu_options[] = {"Med Bioimped", "Configuracoes", "Sobre"};
+    int altura_opcao = 16; // Altura de cada opção do menu
 
     switch (menu_state) {
         case MENU_PRINCIPAL:
             for (int i = 0; i < MENU_SIZE; i++) {
-                ssd1306_draw_string(ssd, "Med Bioimped", 20, 4);
-                ssd1306_draw_string(ssd, "Configuracoes", 20, 20);
-                ssd1306_draw_string(ssd, "Sobre", 20, 32);
-    
-                // Alterna entre as opções destacadas no display
-                if (menu_index == 0) {
-                    ssd1306_rect(ssd, 0, 0, 128, 16, true, false);
-                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
-                } else if (menu_index == 1) {
-                    ssd1306_rect(ssd, 0, 9, 128, 16, true, false);
-                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
-                } else if (menu_index == 2) {
-                    ssd1306_rect(ssd, 0, 48, 128, 16, true, false);
-                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada                    
-                } else {
-                    ssd1306_rect(ssd, 0, 32, 128, 16, true, false);
-                    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
-                }
-                ssd1306_send_data(ssd);
+                int y_posicao = i * altura_opcao;
+                ssd1306_draw_string(ssd, menu_options[i], 20, y_posicao + 4);
             }
+            // Desenha a caixa de seleção ao redor da opção selecionada
+            int selecao_y_posicao = menu_index * altura_opcao;
+            ssd1306_rect(ssd, selecao_y_posicao, 0, 128, altura_opcao, true, false);
+            printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);
             break;
         case MENU_MEDIR:
             ssd1306_draw_string(ssd, "Modo: Medicao", 10, 20);
@@ -109,5 +98,4 @@ void update_menu_display(ssd1306_t *ssd) {
             break;
     }
     ssd1306_send_data(ssd);
-    printf("[DEBUG INDICE ATUAL]: %d\n", menu_index);  // Log da opção selecionada
 }
