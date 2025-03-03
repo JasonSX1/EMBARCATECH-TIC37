@@ -49,15 +49,9 @@ void on_button_down() {
 
 void menu_medir(ssd1306_t *ssd) {
     ssd1306_fill(ssd, false);
-    ssd1306_draw_string(ssd, "Modo: Medicao", 10, 10);
-    ssd1306_draw_string(ssd, "Medindo...", 10, 20);
     ssd1306_send_data(ssd);
-
-    iniciar_medicao(ssd); // Inicia a medição sem travar o sistema
+    iniciar_medicao(ssd);
 }
-
-
-
 
 void on_button_select() {
     switch (menu_state) {
@@ -98,12 +92,12 @@ void update_menu_display(ssd1306_t *ssd) {
             int selecao_y_posicao = menu_index * altura_opcao;
             ssd1306_rect(ssd, selecao_y_posicao, 0, 128, altura_opcao, true, false);
             break;
-            
+
         case MENU_CONFIRMAR_MEDICAO:
             ssd1306_fill(ssd, false);
-            ssd1306_draw_string(ssd, "Iniciar Medicao?", 10, 10);
-            ssd1306_draw_string(ssd, "Pressione OK", 10, 20);
-            ssd1306_draw_string(ssd, "Para continuar", 10, 30);
+            ssd1306_draw_string(ssd, "Iniciar Medicao?", 0, 10);
+            ssd1306_draw_string(ssd, "Pressione A", 1, 20);
+            ssd1306_draw_string(ssd, "para continuar", 1, 30);
             ssd1306_send_data(ssd);
             break;
         

@@ -25,6 +25,7 @@ static float frequencia_instantanea = 0;
 static float historico_frequencias[MEDIA_MOVEL] = {0};
 static int indice_frequencia = 0;
 bool medicao_ativa = false;
+uint32_t tempo_inicio_medicao = 0;
 
 void iniciar_sinal_pwm(uint gpio, uint freq, uint duty_cycle) {
     gpio_set_function(gpio, GPIO_FUNC_PWM);
@@ -65,19 +66,10 @@ void medir_frequencia_instantanea() {
     }
 }
 
-
-uint32_t tempo_inicio_medicao = 0;
-
 void iniciar_medicao(ssd1306_t *display) {
     if (!medicao_ativa) {
-        printf("Iniciando medicao...\n");
         medicao_ativa = true;
         tempo_inicio_medicao = to_ms_since_boot(get_absolute_time());
-
-        ssd1306_fill(display, false);
-        ssd1306_draw_string(display, "Medindo...", 10, 10);
-        ssd1306_send_data(display);
-
         iniciar_sinal_pwm(GPIO_EMISSAO, 1000, 6250);
         gpio_init(GPIO_RECEPCAO);
         gpio_set_dir(GPIO_RECEPCAO, GPIO_IN);
@@ -92,7 +84,6 @@ void atualizar_medicao(ssd1306_t *display) {
         printf("Medicao finalizada.\n");
         medicao_ativa = false;
         pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
-
         ssd1306_fill(display, false);
         ssd1306_draw_string(display, "Medicao finalizada", 10, 10);
         ssd1306_send_data(display);
@@ -108,7 +99,6 @@ void atualizar_medicao(ssd1306_t *display) {
     char buffer[64];
     snprintf(buffer, sizeof(buffer), "Freq: %.2f Hz", frequencia_instantanea);
     printf("%s\n", buffer);
-
     ssd1306_fill(display, false);
     ssd1306_draw_string(display, buffer, 10, 20);
     ssd1306_send_data(display);
