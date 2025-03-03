@@ -75,22 +75,40 @@ void button_isr(uint gpio, uint32_t events) {
     last_press_time = current_time;
 
     if (gpio == BUTTON_JOY) {
-        switch (menu_index) {
-            case 0:
-                menu_state = MENU_MEDIR;
-                menu_medir(&ssd);  // Chama diretamente a medição
-                break;
-            case 1:
-                menu_state = MENU_CONFIG;
-                break;
-            case 2:
-                menu_state = MENU_SOBRE;
-                break;
+        if (medicao_ativa) {
+            medicao_ativa = false;  // Permite interromper a medição e voltar ao menu
+            pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
+            update_display = true;
+        } else {
+            switch (menu_index) {
+                case 0:
+                    menu_state = MENU_MEDIR;
+                    menu_medir(&ssd);
+                    break;
+                case 1:
+                    menu_state = MENU_CONFIG;
+                    break;
+                case 2:
+                    menu_state = MENU_SOBRE;
+                    break;
+            }
         }
         update_display = true;
     }
-}
 
+    if (gpio == BUTTON_A) {
+        medicao_ativa = false;  // Garante que a medição é parada antes de voltar ao menu
+        menu_state = MENU_PRINCIPAL;
+        pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
+        update_display = true;
+    }
+
+    if (gpio == BUTTON_B) {
+        medicao_ativa = false;  // Garante que nada está rodando antes de resetar
+        pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
+        reset_usb_boot(0, 0);  // Reinicia a placa
+    }
+}
 
 int main() {
     stdio_init_all();
@@ -127,10 +145,8 @@ int main() {
             update_display = false;
         }
     
-        atualizar_medicao(&ssd); // Atualiza a medição dentro do loop principal
+        atualizar_medicao(&ssd); // Atualiza a medição no loop principal
     
         sleep_ms(150);
     }
-    
-    
 }

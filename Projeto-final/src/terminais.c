@@ -85,7 +85,7 @@ void iniciar_medicao(ssd1306_t *display) {
 }
 
 void atualizar_medicao(ssd1306_t *display) {
-    if (!medicao_ativa) return; // Se a medição não está ativa, não faz nada
+    if (!medicao_ativa) return; // Se a medição foi interrompida, sai imediatamente
 
     uint32_t tempo_atual = to_ms_since_boot(get_absolute_time());
     if (tempo_atual - tempo_inicio_medicao >= DURACAO_MEDICAO) {
