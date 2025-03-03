@@ -9,10 +9,12 @@ typedef enum {
     MENU_PRINCIPAL,
     MENU_MEDIR,
     MENU_CONFIG,
-    MENU_SOBRE
+    MENU_SOBRE,
+    MENU_CONFIRMAR_MEDICAO
 } MenuState;
 
-// Declaração das variáveis globais (apenas como referência, sem definir!)
+
+// Declaração das variáveis globais
 extern MenuState menu_state;
 extern bool update_display;
 extern int menu_index;

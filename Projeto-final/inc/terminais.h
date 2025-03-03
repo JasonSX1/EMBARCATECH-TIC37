@@ -15,5 +15,6 @@ extern bool medicao_ativa;
 void iniciar_medicao(ssd1306_t *display);
 void atualizar_medicao(ssd1306_t *display);
 void medir_frequencia_instantanea();
+extern bool medicao_ativa;
 
 #endif
