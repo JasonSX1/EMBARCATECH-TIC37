@@ -48,16 +48,15 @@ void on_button_down() {
 }
 
 void menu_medir(ssd1306_t *ssd) {
-    ssd1306_fill(ssd, false); // Limpa o display
-    ssd1306_send_data(ssd);
-
+    ssd1306_fill(ssd, false);
     ssd1306_draw_string(ssd, "Modo: Medicao", 10, 10);
-    ssd1306_draw_string(ssd, "Pressione L3 p/ iniciar", 10, 20);
-
-    iniciar_medicao(); // Chama a função que gerencia a medição e exibe os dados
-    
+    ssd1306_draw_string(ssd, "Medindo...", 10, 20);
     ssd1306_send_data(ssd);
+
+    iniciar_medicao(ssd); // Inicia a medição sem travar o sistema
 }
+
+
 
 
 void on_button_select() {
@@ -101,7 +100,15 @@ void update_menu_display(ssd1306_t *ssd) {
             break;
 
         case MENU_MEDIR:
-            menu_medir(ssd);
+            ssd1306_fill(ssd, false); // Limpa o display
+            ssd1306_send_data(ssd);
+        
+            ssd1306_draw_string(ssd, "Modo: Medicao", 10, 10);
+            ssd1306_draw_string(ssd, "Pressione L3 p/ iniciar", 10, 20);
+            ssd1306_send_data(ssd);
+        
+            iniciar_medicao(ssd); // Chama a função de medição e exibe os dados
+        
             break;
         
         case MENU_CONFIG:

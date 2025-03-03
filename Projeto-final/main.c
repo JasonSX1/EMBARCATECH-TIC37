@@ -6,6 +6,7 @@
 #include "inc/ssd1306.h"
 #include "inc/font.h"
 #include "inc/menu.h"
+#include "inc/terminais.h"
 
 // Definição dos pinos
 #define BUTTON_JOY 22
@@ -77,6 +78,7 @@ void button_isr(uint gpio, uint32_t events) {
         switch (menu_index) {
             case 0:
                 menu_state = MENU_MEDIR;
+                menu_medir(&ssd);  // Chama diretamente a medição
                 break;
             case 1:
                 menu_state = MENU_CONFIG;
@@ -87,15 +89,8 @@ void button_isr(uint gpio, uint32_t events) {
         }
         update_display = true;
     }
-    if (gpio == BUTTON_A) {
-        menu_state = MENU_PRINCIPAL; // Retorna ao menu principal
-        update_display = true;
-        update_menu_display(&ssd);
-    }
-    if (gpio == BUTTON_B) {
-        reset_usb_boot(0, 0);
-    }
 }
+
 
 int main() {
     stdio_init_all();
@@ -132,7 +127,10 @@ int main() {
             update_display = false;
         }
     
+        atualizar_medicao(&ssd); // Atualiza a medição dentro do loop principal
+    
         sleep_ms(150);
     }
+    
     
 }
