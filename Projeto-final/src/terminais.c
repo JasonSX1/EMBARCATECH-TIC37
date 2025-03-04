@@ -100,13 +100,13 @@ void atualizar_medicao(ssd1306_t *display) {
     if (tempo_atual - tempo_inicio_medicao >= DURACAO_MEDICAO) {
         medicao_ativa = false;
         pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
-        ssd1306_fill(display, false);
         parar_som_preenchimento();
-        ssd1306_draw_string(display, "Medicao finalizada!", 10, 10);
-        sleep_ms(1000);
-        ssd1306_send_data(display);
-        return;
+    
+        // Exibir resultados corretamente antes de retornar ao menu
+        float media_frequencia = calcular_media_frequencia();
+        exibir_resultados_no_display(display, media_frequencia);
     }
+    
 
     medir_frequencia_instantanea();
     

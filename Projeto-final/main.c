@@ -31,6 +31,7 @@ int menu_index = 0;
 bool aguardando_confirmacao = false;
 extern const int MENU_SIZE;
 bool medicao_realizada = false;  // Flag para garantir que a medição ocorreu pelo menos uma vez
+static bool resultados_exibidos = false;
 
 // Configuração de pinos
 void setup_gpio(uint pin, bool is_output) {
@@ -164,10 +165,25 @@ int main() {
             medicao_realizada = true;  // Marca que houve uma medição
         } 
         else if (medicao_realizada) {
-            float media_frequencia = calcular_media_frequencia();
-            exibir_resultados_no_display(&ssd, media_frequencia);
+            static bool resultados_exibidos = false;
+        
+            if (!resultados_exibidos) {
+                float media_frequencia = calcular_media_frequencia();
+                exibir_resultados_no_display(&ssd, media_frequencia);
+                ssd1306_send_data(&ssd);
+        
+                resultados_exibidos = true;
+            }
+        
+            // Aguarda o botão A ser pressionado para voltar ao menu
+            if (gpio_get(BUTTON_A) == 0) {  // Verifica se o botão foi pressionado
+                menu_state = MENU_PRINCIPAL;
+                update_display = true;
+                medicao_realizada = false;  // Reset para futuras medições
+                resultados_exibidos = false;  // Reset para futuras medições
+            }
         }
-    
+        
         atualizar_buzzer();
         sleep_ms(150);
     }
