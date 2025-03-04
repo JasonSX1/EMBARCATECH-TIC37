@@ -10,6 +10,7 @@
 #include "inc/buzzer.h"
 #include "inc/medicao.h"
 #include "inc/joystick.h"
+#include "inc/entrada_usuario.h"
 
 // Definição dos pinos
 #define BUTTON_JOY 22
@@ -25,7 +26,6 @@ ssd1306_t ssd;
 
 // Variáveis globais
 static volatile uint32_t last_press_time = 0;
-int menu_index = 0;
 bool aguardando_confirmacao = false;
 extern const int MENU_SIZE;
 bool medicao_realizada = false;  // Flag para garantir que a medição ocorreu pelo menos uma vez
@@ -66,24 +66,30 @@ void button_isr(uint gpio, uint32_t events) {
                     update_display = true;
                     break;
                 case 1:
-                    menu_state = MENU_CONFIG;
-                    update_display = true;
-                    break;
-                case 2:
-                    menu_state = MENU_SOBRE;
-                    update_display = true;
+                    menu_state = MENU_DADOS_USUARIO;
+                    submenu_index = 0;
                     break;
             }
+        } else if (menu_state == MENU_CONFIRMAR_MEDICAO) {
+            menu_state = MENU_MEDIR;
+            iniciar_medicao(&ssd);
+        } else if (menu_state == MENU_DADOS_USUARIO) {
+            // Implementação futura para edição dos dados
         }
+        update_display = true;
     }
 
     if (gpio == BUTTON_A) {
-        menu_state = MENU_PRINCIPAL;  // Voltar ao menu principal
+        if (menu_state == MENU_DADOS_USUARIO) {
+            menu_state = MENU_PRINCIPAL;
+        } else {
+            menu_state = MENU_PRINCIPAL;
+        }
         update_display = true;
     }
 
     if (gpio == BUTTON_B) {
-        reset_usb_boot(0, 0);  // Reinicia a placa
+        reset_usb_boot(0, 0);
     }
 }
 
@@ -91,7 +97,8 @@ int main() {
     stdio_init_all();
     adc_init();
     init_buzzer();
-    init_joystick();  // Inicializa o joystick
+    init_joystick();
+    iniciar_dados_usuario(); // Inicializa os dados do usuário como vazios
 
     // Inicialização do I2C
     i2c_init(I2C_PORT, 400 * 1000);
@@ -114,10 +121,14 @@ int main() {
     // Configura interrupções para os botões
     gpio_set_irq_enabled_with_callback(BUTTON_JOY, GPIO_IRQ_EDGE_FALL, true, button_isr);
     gpio_set_irq_enabled_with_callback(BUTTON_A, GPIO_IRQ_EDGE_FALL, true, button_isr);
-    gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);
+    gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);    
 
     while (true) {
-        read_joystick(&menu_index, MENU_SIZE, &update_display); // Chamada da função de leitura do joystick
+        if (menu_state == MENU_PRINCIPAL) {
+            read_joystick(&menu_index, MENU_SIZE, &update_display); 
+        } else if (menu_state == MENU_DADOS_USUARIO) {
+            read_joystick(&submenu_index, 4, &update_display); // Agora permite navegar no submenu
+        }
 
         if (update_display) {
             update_menu_display(&ssd);
@@ -126,7 +137,7 @@ int main() {
 
         if (medicao_ativa) {
             atualizar_medicao(&ssd);
-            medicao_realizada = true;  // Marca que houve uma medição
+            medicao_realizada = true;
         } 
         else if (medicao_realizada) {
             static bool resultados_exibidos = false;
@@ -135,16 +146,14 @@ int main() {
                 float media_frequencia = calcular_media_frequencia();
                 exibir_resultados_no_display(&ssd, media_frequencia);
                 ssd1306_send_data(&ssd);
-
                 resultados_exibidos = true;
             }
 
-            // Aguarda o botão A ser pressionado para voltar ao menu
             if (gpio_get(BUTTON_A) == 0) {  // Verifica se o botão foi pressionado
                 menu_state = MENU_PRINCIPAL;
                 update_display = true;
-                medicao_realizada = false;  // Reset para futuras medições
-                resultados_exibidos = false;  // Reset para futuras medições
+                medicao_realizada = false;
+                resultados_exibidos = false;
             }
         }
 

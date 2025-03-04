@@ -8,16 +8,15 @@
 typedef enum {
     MENU_PRINCIPAL,
     MENU_MEDIR,
-    MENU_CONFIG,
-    MENU_SOBRE,
-    MENU_CONFIRMAR_MEDICAO
+    MENU_CONFIRMAR_MEDICAO,
+    MENU_DADOS_USUARIO
 } MenuState;
-
 
 // Declaração das variáveis globais
 extern MenuState menu_state;
 extern bool update_display;
 extern int menu_index;
+extern int submenu_index;
 
 // Funções do menu
 void init_buttons();
@@ -27,5 +26,6 @@ void on_button_select();
 void update_menu_display(ssd1306_t *ssd);
 void exibir_confirmacao(ssd1306_t *ssd);
 void menu_medir(ssd1306_t *ssd);
+void menu_dados_usuario(ssd1306_t *ssd);
 
 #endif
