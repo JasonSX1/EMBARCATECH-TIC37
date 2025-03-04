@@ -3,12 +3,10 @@
 
 #include "pico/stdlib.h"
 
-#define GPIO_JOYSTICK_X 26  // Pino do eixo X
-#define GPIO_JOYSTICK_Y 27  // Pino do eixo Y
-#define GPIO_JOYSTICK_BTN 28 // Pino do botão
+#define CENTER 2048  // Valor médio esperado do joystick
+#define DEADZONE 800  // Margem para detectar movimento
 
-void inicializar_joystick();
-int ler_movimento_vertical();
-bool botao_pressionado();
+void init_joystick();  // Inicializa o joystick
+void read_joystick(int *menu_index, int menu_size, bool *update_display);
 
-#endif // JOYSTICK_H
+#endif

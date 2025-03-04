@@ -50,30 +50,6 @@ bool setup_display() {
     return true;
 }
 
-// Leitura do joystick para navegação no menu
-void read_joystick() {
-    static uint16_t last_y_value = CENTER;
-    static uint32_t last_move_time = 0;  // Debounce de tempo
-
-    adc_select_input(0);
-    uint16_t y_value = adc_read();
-    uint32_t current_time = to_ms_since_boot(get_absolute_time());
-
-    if (current_time - last_move_time < 200) return; // Debounce de 200ms
-
-    if (abs(y_value - last_y_value) > DEADZONE) {
-        if (y_value < CENTER - DEADZONE) {
-            menu_index = (menu_index + 1) % MENU_SIZE;
-            update_display = true;
-        } else if (y_value > CENTER + DEADZONE) {
-            menu_index = (menu_index - 1 + MENU_SIZE) % MENU_SIZE;
-            update_display = true;
-        }
-        last_y_value = y_value;
-        last_move_time = current_time;
-    }
-}
-
 // Exibe a tela de confirmação antes da medição
 void exibir_confirmacao() {
     ssd1306_fill(&ssd, false);
@@ -129,53 +105,54 @@ int main() {
     stdio_init_all();
     adc_init();
     init_buzzer();
-    
+    init_joystick();  // Inicializa o joystick
+
     // Inicialização do I2C
     i2c_init(I2C_PORT, 400 * 1000);
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
-    
+
     // Configuração dos botões
     setup_gpio(BUTTON_JOY, false);
     setup_gpio(BUTTON_A, false);
     setup_gpio(BUTTON_B, false);
-    
+
     // Inicialização do display
     if (!setup_display()) {
         printf("Falha ao inicializar o display. Encerrando...\n");
         return -1;
     }
-    
+
     // Configura interrupções para os botões
     gpio_set_irq_enabled_with_callback(BUTTON_JOY, GPIO_IRQ_EDGE_FALL, true, button_isr);
     gpio_set_irq_enabled_with_callback(BUTTON_A, GPIO_IRQ_EDGE_FALL, true, button_isr);
     gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);
-    
+
     while (true) {
-        read_joystick(); // Leitura do joystick
-    
+        read_joystick(&menu_index, MENU_SIZE, &update_display); // Chamada da função de leitura do joystick
+
         if (update_display) {
             update_menu_display(&ssd);
             update_display = false;
         }
-    
+
         if (medicao_ativa) {
             atualizar_medicao(&ssd);
             medicao_realizada = true;  // Marca que houve uma medição
         } 
         else if (medicao_realizada) {
             static bool resultados_exibidos = false;
-        
+
             if (!resultados_exibidos) {
                 float media_frequencia = calcular_media_frequencia();
                 exibir_resultados_no_display(&ssd, media_frequencia);
                 ssd1306_send_data(&ssd);
-        
+
                 resultados_exibidos = true;
             }
-        
+
             // Aguarda o botão A ser pressionado para voltar ao menu
             if (gpio_get(BUTTON_A) == 0) {  // Verifica se o botão foi pressionado
                 menu_state = MENU_PRINCIPAL;
@@ -184,7 +161,7 @@ int main() {
                 resultados_exibidos = false;  // Reset para futuras medições
             }
         }
-        
+
         atualizar_buzzer();
         sleep_ms(150);
     }
