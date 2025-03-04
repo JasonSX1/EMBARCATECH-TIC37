@@ -4,7 +4,7 @@
 
 void init_joystick() {
     adc_init();
-    adc_gpio_init(26);  // Entrada do joystick no ADC (confirme qual GPIO correto)
+    adc_gpio_init(26);  // Entrada do joystick no ADC
 }
 
 void read_joystick(int *menu_index, int menu_size, bool *update_display) {
@@ -15,7 +15,7 @@ void read_joystick(int *menu_index, int menu_size, bool *update_display) {
     uint16_t y_value = adc_read();
     uint32_t current_time = to_ms_since_boot(get_absolute_time());
 
-    if (current_time - last_move_time < 200) return; // Debounce de 200ms
+    if (current_time - last_move_time < 300) return; // Debounce de 200ms
 
     if (abs(y_value - last_y_value) > DEADZONE) {
         if (y_value < CENTER - DEADZONE) {

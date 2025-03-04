@@ -66,38 +66,54 @@ void menu_medir(ssd1306_t *ssd) {
 
 // Ação ao pressionar o botão SELECT
 void on_button_select(ssd1306_t *ssd) {
+    printf("Botão SELECT pressionado! Estado atual: %d\n", menu_state);
     tocar_notificacao(); // Som ao mudar de menu
 
     switch (menu_state) {
         case MENU_PRINCIPAL:
             if (menu_index == 0) {  // Medição
                 if (!usuario.dados_cadastrados) {
-                    menu_state = MENU_DADOS_USUARIO;  // Redireciona para inserir dados
+                    printf("Redirecionando para MENU_DADOS_USUARIO...\n");
+                    menu_state = MENU_DADOS_USUARIO;
                 } else {
+                    printf("Redirecionando para MENU_CONFIRMAR_MEDICAO...\n");
                     menu_state = MENU_CONFIRMAR_MEDICAO;
                     exibir_confirmacao(ssd);
                 }
             } else if (menu_index == 1) {  // Inserir Dados
+                printf("Entrando no submenu de edição de dados...\n");
                 menu_state = MENU_DADOS_USUARIO;
-                submenu_index = 0;  // Resetar seleção ao entrar no menu
+                submenu_index = 0;
             }
             break;
 
         case MENU_CONFIRMAR_MEDICAO:
+            printf("Confirmando medição...\n");
             menu_state = MENU_MEDIR;
             iniciar_medicao(ssd);
             break;
 
         case MENU_DADOS_USUARIO:
-            // Aqui será implementada a edição dos valores
+            printf("Entrando no modo de edição de dados...\n");
+            menu_state = MENU_EDITAR_DADO;
+            update_display = true;
+            break;
+
+        case MENU_EDITAR_DADO:
+            printf("Confirmando edição, retornando ao MENU_DADOS_USUARIO...\n");
+            menu_state = MENU_DADOS_USUARIO;
+            update_display = true;
             break;
 
         default:
+            printf("Voltando ao MENU_PRINCIPAL...\n");
             menu_state = MENU_PRINCIPAL;
             break;
     }
+    printf("Novo estado do menu: %d\n", menu_state);
     update_display = true;
 }
+
 
 // Tela de confirmação antes da medição
 void exibir_confirmacao(ssd1306_t *ssd) {
@@ -140,6 +156,10 @@ void update_menu_display(ssd1306_t *ssd) {
         case MENU_DADOS_USUARIO:
             menu_dados_usuario(ssd);
             break;
+
+        case MENU_EDITAR_DADO:
+            menu_editar_dado(ssd);
+            break;
     }
     ssd1306_send_data(ssd);
 }
@@ -147,6 +167,7 @@ void update_menu_display(ssd1306_t *ssd) {
 
 // Novo submenu: Exibe os dados do usuário
 void menu_dados_usuario(ssd1306_t *ssd) {
+    tocar_notificacao();
     ssd1306_fill(ssd, false);
     
     const char *dados_opcoes[] = {"Idade", "Altura", "Peso", "Sexo"};
@@ -176,6 +197,41 @@ void menu_dados_usuario(ssd1306_t *ssd) {
     // Exibe a caixa de seleção ao redor do item selecionado
     int selecao_y_posicao = submenu_index * 16;
     ssd1306_rect(ssd, selecao_y_posicao, 0, 128, 16, true, false);
+
+    ssd1306_send_data(ssd);
+}
+
+void menu_editar_dado(ssd1306_t *ssd) {
+    ssd1306_fill(ssd, false);
+    
+    char buffer[16];
+
+    // Exibe as setas e o valor atual
+    ssd1306_draw_string(ssd, "<", 10, 28); // Seta esquerda
+    ssd1306_draw_string(ssd, ">", 110, 28); // Seta direita
+
+    switch (submenu_index) {
+        case 0: // Idade
+            snprintf(buffer, sizeof(buffer), "%d anos", usuario.idade);
+            break;
+        case 1: // Altura
+            snprintf(buffer, sizeof(buffer), "%d cm", usuario.altura);
+            break;
+        case 2: // Peso
+            snprintf(buffer, sizeof(buffer), "%.1f kg", usuario.peso);
+            break;
+        case 3: // Sexo (exibe submenu de seleção)
+            ssd1306_draw_string(ssd, "Masculino", 40, 20);
+            ssd1306_draw_string(ssd, "Feminino", 40, 36);
+            // Exibe a seleção com um retângulo
+            ssd1306_rect(ssd, 38, 16 + (usuario.sexo * 16), 88, 16, true, false);
+            ssd1306_send_data(ssd);
+            return;
+    }
+
+    // Centraliza o valor na tela
+    int text_width = strlen(buffer) * 6; // Largura do texto aproximada
+    ssd1306_draw_string(ssd, buffer, (128 - text_width) / 2, 28);
 
     ssd1306_send_data(ssd);
 }

@@ -9,7 +9,8 @@ typedef enum {
     MENU_PRINCIPAL,
     MENU_MEDIR,
     MENU_CONFIRMAR_MEDICAO,
-    MENU_DADOS_USUARIO
+    MENU_DADOS_USUARIO,
+    MENU_EDITAR_DADO
 } MenuState;
 
 // Declaração das variáveis globais
@@ -27,5 +28,6 @@ void update_menu_display(ssd1306_t *ssd);
 void exibir_confirmacao(ssd1306_t *ssd);
 void menu_medir(ssd1306_t *ssd);
 void menu_dados_usuario(ssd1306_t *ssd);
+void menu_editar_dado(ssd1306_t *ssd);
 
 #endif

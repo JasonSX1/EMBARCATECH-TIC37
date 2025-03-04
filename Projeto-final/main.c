@@ -74,8 +74,11 @@ void button_isr(uint gpio, uint32_t events) {
             menu_state = MENU_MEDIR;
             iniciar_medicao(&ssd);
         } else if (menu_state == MENU_DADOS_USUARIO) {
-            // Implementação futura para edição dos dados
-        }
+                printf("Entrando no modo de edição de dados...\n");
+                menu_state = MENU_EDITAR_DADO;  // Agora realmente entra no modo de edição
+                update_display = true;
+            }
+            
         update_display = true;
     }
 

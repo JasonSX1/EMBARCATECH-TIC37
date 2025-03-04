@@ -35,14 +35,6 @@ void configurar_dados_usuario(ssd1306_t *ssd) {
 
         ssd1306_draw_string(ssd, "Pressione OK p/ salvar", 10, 60);
         ssd1306_send_data(ssd);
-
-        // Aqui você pode implementar a lógica para capturar inputs do usuário
-        // Exemplo:
-        // Se UP -> aumentar o valor do campo atual
-        // Se DOWN -> diminuir o valor do campo atual
-        // Se SELECT -> confirmar e passar para o próximo campo
-
-        // Simulação de confirmação (substitua com lógica real de entrada do usuário)
         usuario.dados_cadastrados = true;
     }
 }
