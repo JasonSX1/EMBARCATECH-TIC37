@@ -7,12 +7,14 @@
 // Estado do buzzer
 typedef enum {
     BUZZER_IDLE,       
-    BUZZER_NOTIFICACAO
+    BUZZER_NOTIFICACAO,
+    BUZZER_PREENCHIMENTO
 } BuzzerState;
 
 static volatile BuzzerState buzzer_state = BUZZER_IDLE;
 static volatile uint32_t tempo_inicio_som = 0;
 static uint8_t beep_etapa = 0;
+static uint16_t freq_atual = 500;  // Frequência inicial do som de preenchimento
 
 // Inicializa o pino do buzzer como saída
 void init_buzzer() {
@@ -41,6 +43,19 @@ void tocar_notificacao() {
     beep_etapa = 0;
 }
 
+// Inicia o som progressivo de preenchimento
+void tocar_som_preenchimento() {
+    buzzer_state = BUZZER_PREENCHIMENTO;
+    tempo_inicio_som = to_ms_since_boot(get_absolute_time());
+    freq_atual = 500;  // Começa em 500Hz
+}
+
+// Para o som de preenchimento
+void parar_som_preenchimento() {
+    buzzer_state = BUZZER_IDLE;
+    gpio_put(BUZZER_PIN, false); // Desliga o buzzer
+}
+
 // Atualiza o som do buzzer (chamar no loop principal)
 void atualizar_buzzer() {
     if (buzzer_state == BUZZER_IDLE) return; // Nada para fazer
@@ -53,6 +68,15 @@ void atualizar_buzzer() {
                 iniciar_buzzer(1200, 30);  // Primeira nota (1200Hz, 30ms)
                 beep_etapa = 1;
                 tempo_inicio_som = tempo_atual;
+            }
+            break;
+
+        case BUZZER_PREENCHIMENTO:
+            if (tempo_atual - tempo_inicio_som >= 2400) { // A cada 2400ms aumenta a frequência
+                freq_atual += 50;  // Aumenta a frequência gradualmente
+                if (freq_atual > 2000) freq_atual = 2000;  // Limita em 2000Hz
+                iniciar_buzzer(freq_atual, 30);
+                tempo_inicio_som = tempo_atual; 
             }
             break;
 

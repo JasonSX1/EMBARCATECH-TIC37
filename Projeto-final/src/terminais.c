@@ -5,6 +5,7 @@
 #include "hardware/i2c.h"
 #include "hardware/timer.h"
 #include "inc/ssd1306.h"
+#include "inc/buzzer.h"
 #include <stdio.h>
 
 #define GPIO_EMISSAO 0  // Pino de emissão do sinal
@@ -67,6 +68,7 @@ void medir_frequencia_instantanea() {
 }
 
 void iniciar_medicao(ssd1306_t *display) {
+    tocar_som_preenchimento();
     if (!medicao_ativa) {
         medicao_ativa = true;
         tempo_inicio_medicao = to_ms_since_boot(get_absolute_time());
@@ -81,10 +83,10 @@ void atualizar_medicao(ssd1306_t *display) {
 
     uint32_t tempo_atual = to_ms_since_boot(get_absolute_time());
     if (tempo_atual - tempo_inicio_medicao >= DURACAO_MEDICAO) {
-        printf("Medicao finalizada.\n");
         medicao_ativa = false;
         pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
         ssd1306_fill(display, false);
+        parar_som_preenchimento();
         ssd1306_draw_string(display, "Medicao finalizada", 10, 10);
         ssd1306_send_data(display);
         return;
