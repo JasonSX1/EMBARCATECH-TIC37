@@ -6,6 +6,7 @@
 #include "hardware/timer.h"
 #include "inc/ssd1306.h"
 #include "inc/buzzer.h"
+#include "inc/medicao.h"
 #include <stdio.h>
 
 #define GPIO_EMISSAO 0  // Pino de emissão do sinal
@@ -15,7 +16,7 @@
 #define I2C_SDA 14
 #define I2C_SCL 15
 #define OLED_ADDRESS 0x3C
-#define DURACAO_MEDICAO 10000 //60000 // 1 minuto em milissegundos
+#define DURACAO_MEDICAO 10000 //30000 // 30 segundos em milissegundos
 #define POLLING_RATE 1 // Polling mais rápido para capturar mudanças
 #define TIMEOUT_FREQUENCIA 500 // Tempo limite para resetar a frequência
 #define MEDIA_MOVEL 5 // Número de amostras para suavização
@@ -67,6 +68,20 @@ void medir_frequencia_instantanea() {
     }
 }
 
+float calcular_media_frequencia() {
+    float soma = 0;
+    int contagem = 0;
+    
+    for (int i = 0; i < MEDIA_MOVEL; i++) {
+        if (historico_frequencias[i] > 0) {  // Ignora valores inválidos
+            soma += historico_frequencias[i];
+            contagem++;
+        }
+    }
+
+    return (contagem > 0) ? (soma / contagem) : 0;  // Retorna a média ou 0 se não houver dados suficientes
+}
+
 void iniciar_medicao(ssd1306_t *display) {
     tocar_som_preenchimento();
     if (!medicao_ativa) {
@@ -87,7 +102,8 @@ void atualizar_medicao(ssd1306_t *display) {
         pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
         ssd1306_fill(display, false);
         parar_som_preenchimento();
-        ssd1306_draw_string(display, "Medicao finalizada", 10, 10);
+        ssd1306_draw_string(display, "Medicao finalizada!", 10, 10);
+        sleep_ms(1000);
         ssd1306_send_data(display);
         return;
     }

@@ -72,7 +72,7 @@ void atualizar_buzzer() {
             break;
 
         case BUZZER_PREENCHIMENTO:
-            if (tempo_atual - tempo_inicio_som >= 2400) { // A cada 2400ms aumenta a frequência
+            if (tempo_atual - tempo_inicio_som >= 1200) { // A cada 1200ms aumenta a frequência
                 freq_atual += 50;  // Aumenta a frequência gradualmente
                 if (freq_atual > 2000) freq_atual = 2000;  // Limita em 2000Hz
                 iniciar_buzzer(freq_atual, 30);

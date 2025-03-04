@@ -8,6 +8,7 @@
 #include "inc/menu.h"
 #include "inc/terminais.h"
 #include "inc/buzzer.h"
+#include "inc/medicao.h"
 
 // Definição dos pinos
 #define BUTTON_JOY 22
@@ -29,6 +30,7 @@ static volatile uint32_t last_press_time = 0;
 int menu_index = 0;
 bool aguardando_confirmacao = false;
 extern const int MENU_SIZE;
+bool medicao_realizada = false;  // Flag para garantir que a medição ocorreu pelo menos uma vez
 
 // Configuração de pinos
 void setup_gpio(uint pin, bool is_output) {
@@ -157,13 +159,16 @@ int main() {
             update_display = false;
         }
     
-        // Mantém a medição atualizando os valores no display
         if (medicao_ativa) {
             atualizar_medicao(&ssd);
+            medicao_realizada = true;  // Marca que houve uma medição
+        } 
+        else if (medicao_realizada) {
+            float media_frequencia = calcular_media_frequencia();
+            exibir_resultados_no_display(&ssd, media_frequencia);
         }
-
-        atualizar_buzzer();
     
+        atualizar_buzzer();
         sleep_ms(150);
     }
 }
