@@ -76,6 +76,15 @@ void on_button_select() {
     update_display = true;
 }
 
+void exibir_confirmacao(ssd1306_t *ssd) {
+    ssd1306_fill(ssd, false);
+    ssd1306_draw_string(ssd, "Iniciar Medicao?", 10, 10);
+    ssd1306_draw_string(ssd, "Pressione OK", 10, 20);
+    ssd1306_draw_string(ssd, "Para continuar", 10, 30);
+    tocar_notificacao();  // Som de confirmação ao entrar na tela
+    ssd1306_send_data(ssd);
+}
+
 void update_menu_display(ssd1306_t *ssd) {
     ssd1306_fill(ssd, false); // Limpa o display
     ssd1306_send_data(ssd);

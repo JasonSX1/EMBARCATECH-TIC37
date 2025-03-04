@@ -20,9 +20,6 @@
 #define I2C_SCL 15
 #define I2C_ADDR 0x3C
 
-#define CENTER 2048  // Valor médio esperado do joystick
-#define DEADZONE 800  // Margem para detectar movimento
-
 // Estrutura do display
 ssd1306_t ssd;
 
@@ -50,17 +47,6 @@ bool setup_display() {
     return true;
 }
 
-// Exibe a tela de confirmação antes da medição
-void exibir_confirmacao() {
-    ssd1306_fill(&ssd, false);
-    ssd1306_draw_string(&ssd, "Iniciar Medicao?", 10, 10);
-    ssd1306_draw_string(&ssd, "Pressione OK", 10, 20);
-    ssd1306_draw_string(&ssd, "Para continuar", 10, 30);
-    tocar_notificacao();
-    ssd1306_send_data(&ssd);
-
-}
-
 // Função de interrupção para seleção do menu
 void button_isr(uint gpio, uint32_t events) {
     uint32_t current_time = to_us_since_boot(get_absolute_time());
@@ -76,7 +62,7 @@ void button_isr(uint gpio, uint32_t events) {
             switch (menu_index) {
                 case 0:
                     menu_state = MENU_CONFIRMAR_MEDICAO;
-                    exibir_confirmacao();
+                    exibir_confirmacao(&ssd);
                     update_display = true;
                     break;
                 case 1:

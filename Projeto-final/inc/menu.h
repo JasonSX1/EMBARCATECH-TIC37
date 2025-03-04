@@ -25,6 +25,7 @@ void on_button_up();
 void on_button_down();
 void on_button_select();
 void update_menu_display(ssd1306_t *ssd);
+void exibir_confirmacao(ssd1306_t *ssd);
 void menu_medir(ssd1306_t *ssd);
 
 #endif
