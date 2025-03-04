@@ -99,7 +99,6 @@ void update_menu_display(ssd1306_t *ssd) {
             ssd1306_draw_string(ssd, "Iniciar Medicao?", 0, 10);
             ssd1306_draw_string(ssd, "Pressione A", 1, 20);
             ssd1306_draw_string(ssd, "para continuar", 1, 30);
-            tocar_notificacao();
             ssd1306_send_data(ssd);
             break;
         

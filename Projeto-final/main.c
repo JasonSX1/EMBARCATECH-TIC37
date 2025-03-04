@@ -9,6 +9,7 @@
 #include "inc/terminais.h"
 #include "inc/buzzer.h"
 #include "inc/medicao.h"
+#include "inc/joystick.h"
 
 // Definição dos pinos
 #define BUTTON_JOY 22
@@ -20,7 +21,7 @@
 #define I2C_ADDR 0x3C
 
 #define CENTER 2048  // Valor médio esperado do joystick
-#define DEADZONE 400  // Margem para detectar movimento
+#define DEADZONE 800  // Margem para detectar movimento
 
 // Estrutura do display
 ssd1306_t ssd;
