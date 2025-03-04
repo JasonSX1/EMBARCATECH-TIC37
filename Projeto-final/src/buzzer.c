@@ -6,8 +6,8 @@
 
 // Estado do buzzer
 typedef enum {
-    BUZZER_IDLE,       // Inativo
-    BUZZER_NOTIFICACAO // Emitindo beep curto
+    BUZZER_IDLE,       
+    BUZZER_NOTIFICACAO
 } BuzzerState;
 
 static volatile BuzzerState buzzer_state = BUZZER_IDLE;
@@ -21,15 +21,20 @@ void init_buzzer() {
 }
 
 // Gera um tom específico no buzzer por um tempo determinado (não bloqueante)
-void iniciar_buzzer(uint32_t freq_hz) {
+void iniciar_buzzer(uint32_t freq_hz, uint32_t duration_ms) {
     uint32_t period_us = 1000000 / freq_hz;
-    gpio_put(BUZZER_PIN, true);
-    sleep_us(period_us / 2);
-    gpio_put(BUZZER_PIN, false);
-    sleep_us(period_us / 2);
+    uint32_t half_period = period_us / 2;
+    uint32_t end_time = time_us_32() + (duration_ms * 1000); 
+
+    while (time_us_32() < end_time) {
+        gpio_put(BUZZER_PIN, true);
+        sleep_us(half_period);
+        gpio_put(BUZZER_PIN, false);
+        sleep_us(half_period);
+    }
 }
 
-// Inicia o som de notificação (assíncrono)
+// Inicia o som de notificação (sweep eletrônico)
 void tocar_notificacao() {
     buzzer_state = BUZZER_NOTIFICACAO;
     tempo_inicio_som = to_ms_since_boot(get_absolute_time());
@@ -45,16 +50,9 @@ void atualizar_buzzer() {
     switch (buzzer_state) {
         case BUZZER_NOTIFICACAO:
             if (beep_etapa == 0 && tempo_atual - tempo_inicio_som >= 0) {
-                iniciar_buzzer(5000);  // Primeira nota (1000Hz)
+                iniciar_buzzer(1200, 30);  // Primeira nota (1200Hz, 30ms)
                 beep_etapa = 1;
                 tempo_inicio_som = tempo_atual;
-            } else if (beep_etapa == 1 && tempo_atual - tempo_inicio_som >= 50) {
-                iniciar_buzzer(8000);  // Segunda nota (1500Hz)
-                beep_etapa = 2;
-                tempo_inicio_som = tempo_atual;
-            } else if (beep_etapa == 2 && tempo_atual - tempo_inicio_som >= 50) {
-                gpio_put(BUZZER_PIN, false); // Desliga o buzzer
-                buzzer_state = BUZZER_IDLE;
             }
             break;
 
