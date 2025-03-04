@@ -4,6 +4,7 @@
 #include "inc/menu.h"
 #include "inc/ssd1306.h"
 #include "inc/terminais.h"
+#include "inc/buzzer.h"
 
 // Definição dos pinos dos botões
 #define BUTTON_UP 5
@@ -98,15 +99,16 @@ void update_menu_display(ssd1306_t *ssd) {
             ssd1306_draw_string(ssd, "Iniciar Medicao?", 0, 10);
             ssd1306_draw_string(ssd, "Pressione A", 1, 20);
             ssd1306_draw_string(ssd, "para continuar", 1, 30);
+            tocar_notificacao();
             ssd1306_send_data(ssd);
             break;
         
         case MENU_MEDIR:
             ssd1306_fill(ssd, false); // Limpa o display
             ssd1306_send_data(ssd);
-        
             ssd1306_draw_string(ssd, "Modo: Medicao", 10, 10);
             ssd1306_draw_string(ssd, "Pressione L3 p/ iniciar", 10, 20);
+            tocar_notificacao();
             ssd1306_send_data(ssd);
         
             iniciar_medicao(ssd); // Chama a função de medição e exibe os dados
@@ -115,11 +117,13 @@ void update_menu_display(ssd1306_t *ssd) {
         
         case MENU_CONFIG:
             ssd1306_draw_string(ssd, "Configuracoes", 10, 20);
+            tocar_notificacao();
             break;
 
         case MENU_SOBRE:
             ssd1306_draw_string(ssd, "Sobre este projeto", 10, 10);
             ssd1306_draw_string(ssd, "Bioimpedancia V1.0", 10, 20);
+            tocar_notificacao();
             break;
     }
     ssd1306_send_data(ssd);

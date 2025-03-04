@@ -7,6 +7,7 @@
 #include "inc/font.h"
 #include "inc/menu.h"
 #include "inc/terminais.h"
+#include "inc/buzzer.h"
 
 // Definição dos pinos
 #define BUTTON_JOY 22
@@ -75,7 +76,9 @@ void exibir_confirmacao() {
     ssd1306_draw_string(&ssd, "Iniciar Medicao?", 10, 10);
     ssd1306_draw_string(&ssd, "Pressione OK", 10, 20);
     ssd1306_draw_string(&ssd, "Para continuar", 10, 30);
+    tocar_notificacao();
     ssd1306_send_data(&ssd);
+
 }
 
 // Função de interrupção para seleção do menu
@@ -121,6 +124,7 @@ void button_isr(uint gpio, uint32_t events) {
 int main() {
     stdio_init_all();
     adc_init();
+    init_buzzer();
     
     // Inicialização do I2C
     i2c_init(I2C_PORT, 400 * 1000);
@@ -157,6 +161,8 @@ int main() {
         if (medicao_ativa) {
             atualizar_medicao(&ssd);
         }
+
+        atualizar_buzzer();
     
         sleep_ms(150);
     }
