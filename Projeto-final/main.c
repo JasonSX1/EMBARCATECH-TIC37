@@ -127,12 +127,14 @@ int main() {
     gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, button_isr);    
 
     while (true) {
-        if (menu_state == MENU_PRINCIPAL) {
-            read_joystick(&menu_index, MENU_SIZE, &update_display); 
-        } else if (menu_state == MENU_DADOS_USUARIO) {
-            read_joystick(&submenu_index, 4, &update_display); // Agora permite navegar no submenu
-        }
+        bool editando = (menu_state == MENU_EDITAR_DADO);
 
+        if (menu_state == MENU_DADOS_USUARIO || menu_state == MENU_EDITAR_DADO) {
+            read_joystick_submenu(&submenu_index, 4, &update_display, editando, &usuario.idade, &usuario.altura, &usuario.peso, &usuario.sexo);
+        } else {
+            read_joystick(&menu_index, MENU_SIZE, &update_display);
+        }
+        
         if (update_display) {
             update_menu_display(&ssd);
             update_display = false;
