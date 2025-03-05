@@ -118,7 +118,7 @@ void on_button_select(ssd1306_t *ssd) {
 // Tela de confirmação antes da medição
 void exibir_confirmacao(ssd1306_t *ssd) {
     ssd1306_fill(ssd, false);
-    ssd1306_draw_string(ssd, "Iniciar Medicao", 8, 10);
+    ssd1306_draw_string(ssd, "Iniciar Medicao", 6, 10);
     ssd1306_draw_string(ssd, "Pressione OK", 8, 25);
     ssd1306_draw_string(ssd, "Para continuar", 8, 40);
     tocar_notificacao();
