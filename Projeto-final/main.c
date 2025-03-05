@@ -56,17 +56,14 @@ void button_isr(uint gpio, uint32_t events) {
     if (gpio == BUTTON_JOY) {
         if (menu_state == MENU_CONFIRMAR_MEDICAO) {
             // Agora inicia a medição corretamente ao confirmar
-            printf("Iniciando medição...\n");
             menu_state = MENU_MEDIR;
             iniciar_medicao(&ssd);
             update_display = true;
         } else if (menu_state == MENU_EDITAR_DADO) {
             // Se estiver editando um dado, retorna à seleção de opções
-            printf("Voltando para MENU_DADOS_USUARIO...\n");
             menu_state = MENU_DADOS_USUARIO;
             update_display = true;
         } else if (menu_state == MENU_DADOS_USUARIO) {
-            printf("Entrando no modo de edição de dados...\n");
             menu_state = MENU_EDITAR_DADO;
             update_display = true;
         } else if (menu_state == MENU_PRINCIPAL) {
@@ -88,7 +85,6 @@ void button_isr(uint gpio, uint32_t events) {
     if (gpio == BUTTON_A) {
         if (menu_state == MENU_CONFIRMAR_MEDICAO) {
             // Se pressionar "A", volta ao menu principal sem iniciar a medição
-            printf("Cancelando medição, voltando ao MENU_PRINCIPAL...\n");
             menu_state = MENU_PRINCIPAL;
             update_display = true;
         } else if (menu_state == MENU_DADOS_USUARIO) {
@@ -125,7 +121,6 @@ int main() {
 
     // Inicialização do display
     if (!setup_display()) {
-        printf("Falha ao inicializar o display. Encerrando...\n");
         return -1;
     }
 
