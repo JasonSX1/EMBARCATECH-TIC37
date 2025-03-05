@@ -55,32 +55,7 @@ void button_isr(uint gpio, uint32_t events) {
 
     if (gpio == BUTTON_JOY) {
         if (menu_state == MENU_CONFIRMAR_MEDICAO) {
-            // Verificar se os dados estão completos antes de iniciar a medição
-            if (usuario.idade <= 0 || usuario.altura <= 0 || usuario.peso <= 0.0 || (usuario.sexo != 0 && usuario.sexo != 1)) {
-                printf("Erro: Dados do usuário incompletos!\n");
-
-                // Emite som de erro
-                tocar_som_erro();
-
-                // Exibe a mensagem no display
-                ssd1306_fill(&ssd, false);
-                ssd1306_draw_string(&ssd, "Erro", 50, 10);
-                ssd1306_draw_string(&ssd, "Preencha os", 20, 25);
-                ssd1306_draw_string(&ssd, "dados antes", 20, 40);
-                ssd1306_draw_string(&ssd, "de medir", 30, 55);
-                ssd1306_send_data(&ssd);
-
-                // Aguarda o usuário pressionar o botão SELECT para continuar
-                while (gpio_get(BUTTON_JOY)) {
-                    sleep_ms(100);
-                }
-
-                // Redireciona o usuário ao menu de edição de dados
-                menu_state = MENU_DADOS_USUARIO;
-                return;
-            }
-
-            // Iniciar a medição somente se os dados estiverem completos
+            // Inicia a medição
             menu_state = MENU_MEDIR;
             iniciar_medicao(&ssd);
             update_display = true;
@@ -108,17 +83,9 @@ void button_isr(uint gpio, uint32_t events) {
 
     if (gpio == BUTTON_A) {
         if (menu_state == MENU_MEDIR) {
-            // Interrompe a medição corretamente
+            // Interrompe a medição imediatamente
             medicao_ativa = false;
             parar_som_preenchimento();
-
-            // Exibir uma mensagem para o usuário antes de sair
-            ssd1306_fill(&ssd, false);
-            ssd1306_draw_string(&ssd, "Medição interrompida", 10, 30);
-            ssd1306_send_data(&ssd);
-            sleep_ms(2000); // Mostra a mensagem por 2 segundos
-
-            // Volta ao menu principal
             menu_state = MENU_PRINCIPAL;
             update_display = true;
         } else {
@@ -131,7 +98,6 @@ void button_isr(uint gpio, uint32_t events) {
         reset_usb_boot(0, 0);
     }
 }
-
 
 int main() {
     stdio_init_all();
