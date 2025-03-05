@@ -55,8 +55,19 @@ void button_isr(uint gpio, uint32_t events) {
 
     if (gpio == BUTTON_JOY) {
         if (menu_state == MENU_CONFIRMAR_MEDICAO) {
+            // Agora inicia a medição corretamente ao confirmar
+            printf("Iniciando medição...\n");
             menu_state = MENU_MEDIR;
             iniciar_medicao(&ssd);
+            update_display = true;
+        } else if (menu_state == MENU_EDITAR_DADO) {
+            // Se estiver editando um dado, retorna à seleção de opções
+            printf("Voltando para MENU_DADOS_USUARIO...\n");
+            menu_state = MENU_DADOS_USUARIO;
+            update_display = true;
+        } else if (menu_state == MENU_DADOS_USUARIO) {
+            printf("Entrando no modo de edição de dados...\n");
+            menu_state = MENU_EDITAR_DADO;
             update_display = true;
         } else if (menu_state == MENU_PRINCIPAL) {
             switch (menu_index) {
@@ -68,22 +79,19 @@ void button_isr(uint gpio, uint32_t events) {
                 case 1:
                     menu_state = MENU_DADOS_USUARIO;
                     submenu_index = 0;
+                    update_display = true;
                     break;
             }
-        } else if (menu_state == MENU_CONFIRMAR_MEDICAO) {
-            menu_state = MENU_MEDIR;
-            iniciar_medicao(&ssd);
-        } else if (menu_state == MENU_DADOS_USUARIO) {
-                printf("Entrando no modo de edição de dados...\n");
-                menu_state = MENU_EDITAR_DADO;  // Agora realmente entra no modo de edição
-                update_display = true;
-            }
-            
-        update_display = true;
+        }
     }
 
     if (gpio == BUTTON_A) {
-        if (menu_state == MENU_DADOS_USUARIO) {
+        if (menu_state == MENU_CONFIRMAR_MEDICAO) {
+            // Se pressionar "A", volta ao menu principal sem iniciar a medição
+            printf("Cancelando medição, voltando ao MENU_PRINCIPAL...\n");
+            menu_state = MENU_PRINCIPAL;
+            update_display = true;
+        } else if (menu_state == MENU_DADOS_USUARIO) {
             menu_state = MENU_PRINCIPAL;
         } else {
             menu_state = MENU_PRINCIPAL;
