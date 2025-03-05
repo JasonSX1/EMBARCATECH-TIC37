@@ -40,7 +40,6 @@ add_executable(Projeto-final
         main.c
         src/buzzer.c
         src/entrada_usuario.c
-        src/fonts.c
         src/joystick.c
         src/medicao.c
         src/menu.c
