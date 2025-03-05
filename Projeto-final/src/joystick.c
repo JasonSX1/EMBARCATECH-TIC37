@@ -1,6 +1,7 @@
 #include "inc/joystick.h"
 #include "hardware/adc.h"
 #include <stdlib.h>
+#include "math.h"
 
 // Definição dos canais ADC do joystick
 #define JOY_X 1  // Canal ADC para eixo X
@@ -26,7 +27,7 @@ void read_joystick(int *menu_index, int menu_size, bool *update_display) {
     uint16_t y_value = adc_read();
     uint32_t current_time = to_ms_since_boot(get_absolute_time());
 
-    if (current_time - last_move_time < 300) return; // Debounce de 200ms
+    if (current_time - last_move_time < 100) return; // Debounce de 100ms
 
     if (abs(y_value - last_y_value) > DEADZONE) {
         if (y_value < CENTER - DEADZONE) {
@@ -106,17 +107,19 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
             last_x_change_time = current_time;
         }
 
-        // Ajuste contínuo (acelera conforme tempo segurando)
+        // Ajuste contínuo (segurando o analógico)
         if (valor_modificado && (current_time - holding_time > acceleration_delay)) {
             if (x_value < CENTER - DEADZONE) {
                 if (*campo_atual == 2) { // Peso (float)
-                    *(float*)valor_modificado -= 0.2f;  // Aceleração reduz 0.2
+                    // Arredonda para o inteiro mais próximo e pula direto de 1 em 1 kg
+                    *(float*)valor_modificado = floor(*(float*)valor_modificado) - 1;
                 } else {
                     (*valor_modificado) -= 2;  // Aceleração reduz 2 unidades
                 }
             } else if (x_value > CENTER + DEADZONE) {
                 if (*campo_atual == 2) { // Peso (float)
-                    *(float*)valor_modificado += 0.2f;  // Aceleração aumenta 0.2
+                    // Arredonda para o inteiro mais próximo e pula direto de 1 em 1 kg
+                    *(float*)valor_modificado = ceil(*(float*)valor_modificado) + 1;
                 } else {
                     (*valor_modificado) += 2;  // Aceleração aumenta 2 unidades
                 }
