@@ -36,7 +36,6 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(Projeto-final 
-        Projeto-final.c
         main.c
         src/buzzer.c
         src/entrada_usuario.c
