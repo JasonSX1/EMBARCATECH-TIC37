@@ -16,7 +16,7 @@
 #define I2C_SDA 14
 #define I2C_SCL 15
 #define OLED_ADDRESS 0x3C
-#define DURACAO_MEDICAO 10000 //30000 // 30 segundos em milissegundos
+#define DURACAO_MEDICAO 30000 // 30 segundos em milissegundos
 #define POLLING_RATE 1 // Polling mais rápido para capturar mudanças
 #define TIMEOUT_FREQUENCIA 500 // Tempo limite para resetar a frequência
 #define MEDIA_MOVEL 5 // Número de amostras para suavização
