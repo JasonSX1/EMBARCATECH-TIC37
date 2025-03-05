@@ -81,24 +81,44 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
         }
 
         // Detecta se o analógico foi movido e inicia a contagem do tempo segurando
-        if (abs(x_value - last_x_value) > DEADZONE) {
+        bool analogico_movido = abs(x_value - last_x_value) > DEADZONE;
+        if (analogico_movido) {
             holding_time = current_time;  // Inicia a contagem do tempo segurando o analógico
             last_x_value = x_value;
         }
 
-        // Mantém a alteração contínua enquanto o analógico estiver segurado
-        if (valor_modificado && (current_time - holding_time > acceleration_delay)) {
+        // Ajuste fino (clique a clique) - Funciona imediatamente ao mover o analógico
+        if (valor_modificado && analogico_movido && (current_time - last_x_change_time > 150)) {
             if (x_value < CENTER - DEADZONE) {
                 if (*campo_atual == 2) { // Peso (float)
-                    *(float*)valor_modificado -= 0.2f;  // Aumenta decremento para 0.2 em vez de 0.1
+                    *(float*)valor_modificado -= 0.1f;  // Ajuste fino reduz 0.1
                 } else {
-                    (*valor_modificado) -= 2;  // Muda de 1 para 2 unidades por vez
+                    (*valor_modificado) -= 1;  // Ajuste fino reduz 1 unidade
                 }
             } else if (x_value > CENTER + DEADZONE) {
                 if (*campo_atual == 2) { // Peso (float)
-                    *(float*)valor_modificado += 0.2f;  // Aumenta incremento para 0.2
+                    *(float*)valor_modificado += 0.1f;  // Ajuste fino aumenta 0.1
                 } else {
-                    (*valor_modificado) += 2;  // Muda de 1 para 2 unidades por vez
+                    (*valor_modificado) += 1;  // Ajuste fino aumenta 1 unidade
+                }
+            }
+            *update_display = true;
+            last_x_change_time = current_time;
+        }
+
+        // Ajuste contínuo (acelera conforme tempo segurando)
+        if (valor_modificado && (current_time - holding_time > acceleration_delay)) {
+            if (x_value < CENTER - DEADZONE) {
+                if (*campo_atual == 2) { // Peso (float)
+                    *(float*)valor_modificado -= 0.2f;  // Aceleração reduz 0.2
+                } else {
+                    (*valor_modificado) -= 2;  // Aceleração reduz 2 unidades
+                }
+            } else if (x_value > CENTER + DEADZONE) {
+                if (*campo_atual == 2) { // Peso (float)
+                    *(float*)valor_modificado += 0.2f;  // Aceleração aumenta 0.2
+                } else {
+                    (*valor_modificado) += 2;  // Aceleração aumenta 2 unidades
                 }
             }
             *update_display = true;
