@@ -1,0 +1,46 @@
+.program ws2812b
+
+.wrap_target
+    out x, 1
+    jmp !x do_zero
+do_one:
+    set pins, 1 [4]
+    jmp cont
+do_zero:
+    set pins, 1 [2]
+    set pins, 0 [2]
+cont:
+    set pins, 0 [1]
+.wrap
+
+
+% c-sdk {
+#include "hardware/clocks.h"
+
+void ws2812b_program_init(PIO pio, uint sm, uint offset, uint pin, float freq) {
+    pio_gpio_init(pio, pin);
+    
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    
+    // Configuração da máquina de estados do PIO
+    pio_sm_config c = ws2812b_program_get_default_config(offset);
+    
+    sm_config_set_set_pins(&c, pin, 1); // Define o pino como saída de SET
+    
+    // Shift de saída configurado para 24 bits
+    sm_config_set_out_shift(&c, false, true, 24);
+    
+    // FIFO apenas para TX (escrita)
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    
+    // Configura o clock para os LEDs dinamicamente com base no freq passado como parametro
+    float prescaler = clock_get_hz(clk_sys) / (10.f * freq); // 10 cycles per transmission, freq is frequency of encoded bits.
+    sm_config_set_clkdiv(&c, prescaler);
+    
+    // Inicializa a máquina de estados com a configuração
+    pio_sm_init(pio, sm, offset, &c);
+    
+    // Habilita a máquina de estados
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
