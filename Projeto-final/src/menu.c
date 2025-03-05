@@ -118,9 +118,9 @@ void on_button_select(ssd1306_t *ssd) {
 // Tela de confirmação antes da medição
 void exibir_confirmacao(ssd1306_t *ssd) {
     ssd1306_fill(ssd, false);
-    ssd1306_draw_string(ssd, "Iniciar Medicao?", 10, 10);
-    ssd1306_draw_string(ssd, "Pressione OK", 10, 20);
-    ssd1306_draw_string(ssd, "Para continuar", 10, 30);
+    ssd1306_draw_string(ssd, "Iniciar Medicao", 8, 10);
+    ssd1306_draw_string(ssd, "Pressione OK", 8, 25);
+    ssd1306_draw_string(ssd, "Para continuar", 8, 40);
     tocar_notificacao();
     ssd1306_send_data(ssd);
 }
@@ -203,12 +203,14 @@ void menu_dados_usuario(ssd1306_t *ssd) {
 
 void menu_editar_dado(ssd1306_t *ssd) {
     ssd1306_fill(ssd, false);
-    
+
     char buffer[16];
 
-    // Exibe as setas e o valor atual
-    ssd1306_draw_string(ssd, "<", 10, 28); // Seta esquerda
-    ssd1306_draw_string(ssd, ">", 110, 28); // Seta direita
+    // Exibe as setas e o valor atual (exceto para o sexo)
+    if (submenu_index < 3) {
+        ssd1306_draw_string(ssd, "<", 10, 28); // Seta esquerda
+        ssd1306_draw_string(ssd, ">", 110, 28); // Seta direita
+    }
 
     switch (submenu_index) {
         case 0: // Idade
@@ -220,18 +222,46 @@ void menu_editar_dado(ssd1306_t *ssd) {
         case 2: // Peso
             snprintf(buffer, sizeof(buffer), "%.1f kg", usuario.peso);
             break;
-        case 3: // Sexo (exibe submenu de seleção)
-            ssd1306_draw_string(ssd, "Masculino", 40, 20);
-            ssd1306_draw_string(ssd, "Feminino", 40, 36);
-            // Exibe a seleção com um retângulo
-            ssd1306_rect(ssd, 38, 16 + (usuario.sexo * 16), 88, 16, true, false);
-            ssd1306_send_data(ssd);
-            return;
+        case 3: // Sexo
+            {
+                // Definição das posições base para alinhamento
+                int x_texto = 40;  // Posição X do texto alinhado
+                int y_masculino = 20;  // Posição Y do texto "Masculino"
+                int y_feminino = 40;  // Posição Y do texto "Feminino"
+
+                // Desenha as opções de sexo
+                ssd1306_draw_string(ssd, "Masculino", x_texto, y_masculino);
+                ssd1306_draw_string(ssd, "Feminino", x_texto, y_feminino);
+
+                // Ajuste do deslocamento da caixa de seleção
+                int deslocamento_x_caixa = -2;  // Move 2px para a esquerda
+                int deslocamento_y_caixa = -3;  // Move 3px para cima
+
+                // Definição da posição da caixa de seleção
+                int x_caixa, y_caixa;
+                if (usuario.sexo == 0) {
+                    // Selecionado: Feminino
+                    x_caixa = x_texto + deslocamento_x_caixa;
+                    y_caixa = y_feminino + deslocamento_y_caixa;
+                } else {
+                    // Selecionado: Masculino
+                    x_caixa = x_texto + deslocamento_x_caixa;
+                    y_caixa = y_masculino + deslocamento_y_caixa;
+                }
+
+                // Desenha a caixa de seleção ao redor da opção escolhida
+                ssd1306_rect(ssd, y_caixa, x_caixa, 80, 14, true, false);
+
+                ssd1306_send_data(ssd);
+                return;
+            }
     }
 
-    // Centraliza o valor na tela
-    int text_width = strlen(buffer) * 6; // Largura do texto aproximada
-    ssd1306_draw_string(ssd, buffer, (128 - text_width) / 2, 28);
+    // Centraliza o valor na tela apenas para idade, altura e peso
+    if (submenu_index < 3) {
+        int text_width = strlen(buffer) * 6; // Largura aproximada do texto
+        ssd1306_draw_string(ssd, buffer, (128 - text_width) / 2, 28);
+    }
 
     ssd1306_send_data(ssd);
 }

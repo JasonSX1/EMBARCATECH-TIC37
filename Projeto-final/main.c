@@ -50,7 +50,7 @@ bool setup_display() {
 // Função de interrupção para seleção do menu
 void button_isr(uint gpio, uint32_t events) {
     uint32_t current_time = to_us_since_boot(get_absolute_time());
-    if (current_time - last_press_time < 300000) return;  // Debounce de 300ms
+    if (current_time - last_press_time < 200000) return;  // Debounce de 200ms
     last_press_time = current_time;
 
     if (gpio == BUTTON_JOY) {
