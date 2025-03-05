@@ -55,12 +55,11 @@ void button_isr(uint gpio, uint32_t events) {
 
     if (gpio == BUTTON_JOY) {
         if (menu_state == MENU_CONFIRMAR_MEDICAO) {
-            // Agora inicia a medição corretamente ao confirmar
+            // Inicia a medição
             menu_state = MENU_MEDIR;
             iniciar_medicao(&ssd);
             update_display = true;
         } else if (menu_state == MENU_EDITAR_DADO) {
-            // Se estiver editando um dado, retorna à seleção de opções
             menu_state = MENU_DADOS_USUARIO;
             update_display = true;
         } else if (menu_state == MENU_DADOS_USUARIO) {
@@ -83,16 +82,16 @@ void button_isr(uint gpio, uint32_t events) {
     }
 
     if (gpio == BUTTON_A) {
-        if (menu_state == MENU_CONFIRMAR_MEDICAO) {
-            // Se pressionar "A", volta ao menu principal sem iniciar a medição
+        if (menu_state == MENU_MEDIR) {
+            // Interrompe a medição imediatamente
+            medicao_ativa = false;
+            parar_som_preenchimento();
             menu_state = MENU_PRINCIPAL;
             update_display = true;
-        } else if (menu_state == MENU_DADOS_USUARIO) {
-            menu_state = MENU_PRINCIPAL;
         } else {
             menu_state = MENU_PRINCIPAL;
+            update_display = true;
         }
-        update_display = true;
     }
 
     if (gpio == BUTTON_B) {
