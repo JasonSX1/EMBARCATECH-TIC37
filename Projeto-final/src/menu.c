@@ -59,6 +59,11 @@ void on_button_down() {
 
 // Função que inicia a medição de bioimpedância
 void menu_medir(ssd1306_t *ssd) {
+    if (!usuario.dados_cadastrados) {
+        printf("Por favor, insira os seus dados antes da medição!\n");
+        menu_state = MENU_DADOS_USUARIO;
+        return;
+    }
     ssd1306_fill(ssd, false);
     ssd1306_send_data(ssd);
     iniciar_medicao(ssd);
