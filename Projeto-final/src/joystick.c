@@ -89,6 +89,10 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
                     if (*(float*)valor_modificado > 0.0f) {
                         *(float*)valor_modificado -= 0.1f;
                     }
+                } else if (*campo_atual == 3) { // Limitar sexo entre 0 (Masculino) e 1 (Feminino)
+                    if (*valor_modificado > 0) {
+                        (*valor_modificado) -= 1;
+                    }
                 } else {
                     if (*valor_modificado > 0) {
                         (*valor_modificado) -= 1;
@@ -97,6 +101,10 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
             } else if (x_value > CENTER + DEADZONE) {
                 if (*campo_atual == 2) { 
                     *(float*)valor_modificado += 0.1f;
+                } else if (*campo_atual == 3) { // Limitar sexo entre 0 e 1
+                    if (*valor_modificado < 1) {
+                        (*valor_modificado) += 1;
+                    }
                 } else {
                     (*valor_modificado) += 1;
                 }
@@ -107,10 +115,13 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
 
         if (valor_modificado && (current_time - holding_time > acceleration_delay)) {
             if (x_value < CENTER - DEADZONE) {
-                if (*campo_atual == 2) { // Peso (float)
-                    // Arredonda para o inteiro mais próximo e pula direto de 1 em 1 kg
+                if (*campo_atual == 2) {
                     if (*(float*)valor_modificado > 0.0f) {
                         *(float*)valor_modificado = floor(*(float*)valor_modificado) - 1;
+                    }
+                } else if (*campo_atual == 3) { // Evita sair do intervalo 0-1
+                    if (*valor_modificado > 0) {
+                        (*valor_modificado) -= 1;
                     }
                 } else {
                     if (*valor_modificado > 0) {
@@ -118,19 +129,22 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
                     }
                 }
             } else if (x_value > CENTER + DEADZONE) {
-                if (*campo_atual == 2) { // Peso (float)
-                    // Arredonda para o inteiro mais próximo e pula direto de 1 em 1 kg
+                if (*campo_atual == 2) {
                     *(float*)valor_modificado = ceil(*(float*)valor_modificado) + 1;
+                } else if (*campo_atual == 3) { // Evita sair do intervalo 0-1
+                    if (*valor_modificado < 1) {
+                        (*valor_modificado) += 1;
+                    }
                 } else {
-                    (*valor_modificado) += 2;  // Aceleração aumenta 2 unidades
+                    (*valor_modificado) += 2;
                 }
             }
             *update_display = true;
-            holding_time = current_time;  // Reinicia a contagem para continuar alterando
+            holding_time = current_time;
 
+            if (acceleration_delay > 30) acceleration_delay -= 20;
         }
 
-        // Se soltar o analógico, reseta a aceleração
         if (abs(x_value - CENTER) < DEADZONE) {
             acceleration_delay = 300;
             holding_time = 0;
