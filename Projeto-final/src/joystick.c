@@ -10,6 +10,7 @@
 static uint32_t last_x_change_time = 0;
 static uint32_t last_y_change_time = 0;
 static uint32_t acceleration_delay = 300;  // Tempo inicial entre mudanças (ms)
+static uint32_t holding_time = 0;  // Tempo segurando o analógico
 
 void init_joystick() {
     adc_init();
@@ -79,32 +80,38 @@ void read_joystick_submenu(int *campo_atual, int total_campos, bool *update_disp
             case 3: valor_modificado = sexo; break;
         }
 
-        // Modificar o valor com aceleração progressiva ao segurar o analógico
-        if (valor_modificado && abs(x_value - last_x_value) > DEADZONE) {
-            if (current_time - last_x_change_time > acceleration_delay) {
-                if (x_value < CENTER - DEADZONE) {
-                    if (*campo_atual == 2) { // Peso (float)
-                        *(float*)valor_modificado -= 0.1f;
-                    } else {
-                        (*valor_modificado)--;
-                    }
-                } else if (x_value > CENTER + DEADZONE) {
-                    if (*campo_atual == 2) { // Peso (float)
-                        *(float*)valor_modificado += 0.1f;
-                    } else {
-                        (*valor_modificado)++;
-                    }
-                }
-                *update_display = true;
-                last_x_change_time = current_time;
-
-                // Reduzir o tempo de espera para mudanças sucessivas (aceleração)
-                if (acceleration_delay > 50) acceleration_delay -= 50;
-            }
-        } else {
-            acceleration_delay = 300;  // Resetar tempo caso solte o analógico
+        // Detecta se o analógico foi movido e inicia a contagem do tempo segurando
+        if (abs(x_value - last_x_value) > DEADZONE) {
+            holding_time = current_time;  // Inicia a contagem do tempo segurando o analógico
+            last_x_value = x_value;
         }
 
-        last_x_value = x_value;
+        // Mantém a alteração contínua enquanto o analógico estiver segurado
+        if (valor_modificado && (current_time - holding_time > acceleration_delay)) {
+            if (x_value < CENTER - DEADZONE) {
+                if (*campo_atual == 2) { // Peso (float)
+                    *(float*)valor_modificado -= 0.2f;  // Aumenta decremento para 0.2 em vez de 0.1
+                } else {
+                    (*valor_modificado) -= 2;  // Muda de 1 para 2 unidades por vez
+                }
+            } else if (x_value > CENTER + DEADZONE) {
+                if (*campo_atual == 2) { // Peso (float)
+                    *(float*)valor_modificado += 0.2f;  // Aumenta incremento para 0.2
+                } else {
+                    (*valor_modificado) += 2;  // Muda de 1 para 2 unidades por vez
+                }
+            }
+            *update_display = true;
+            holding_time = current_time;  // Reinicia a contagem para continuar alterando
+
+            // Reduz progressivamente o tempo de espera para acelerar a alteração contínua
+            if (acceleration_delay > 30) acceleration_delay -= 20;  // Agora reduz 20ms em vez de 50ms
+        }
+
+        // Se soltar o analógico, reseta a aceleração
+        if (abs(x_value - CENTER) < DEADZONE) {
+            acceleration_delay = 300;
+            holding_time = 0;
+        }
     }
 }

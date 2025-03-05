@@ -4,11 +4,11 @@
 // Variável global para armazenar os dados do usuário
 DadosUsuario usuario = {0, 0, 0.0, 0, false};  // Inicia sem valores válidos
 
-// Inicializa os dados do usuário como vazios/nulos
+// Inicializa os dados do usuário
 void iniciar_dados_usuario() {
     usuario.idade = 0;
-    usuario.altura = 0;
-    usuario.peso = 0.0;
+    usuario.altura = 150;
+    usuario.peso = 50.0;
     usuario.sexo = 0;
     usuario.dados_cadastrados = false;
 }
