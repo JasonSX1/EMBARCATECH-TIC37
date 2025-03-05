@@ -20,16 +20,18 @@
 #define I2C_SDA 14
 #define I2C_SCL 15
 #define I2C_ADDR 0x3C
+#define TEMPO_LIMITE_MEDICAO 5000  // Tempo máximo sem contato (5 segundos)
 
 // Estrutura do display
 ssd1306_t ssd;
 
 // Variáveis globais
-static volatile uint32_t last_press_time = 0;
-bool aguardando_confirmacao = false;
 extern const int MENU_SIZE;
-bool medicao_realizada = false;  // Flag para garantir que a medição ocorreu pelo menos uma vez
+static volatile uint32_t last_press_time = 0;
 static bool resultados_exibidos = false;
+static uint32_t tempo_inicio_medicao = 0;  // Armazena o tempo de início da medição
+bool medicao_realizada = false;  // Flag para garantir que a medição ocorreu pelo menos uma vez
+bool aguardando_confirmacao = false;
 
 // Configuração de pinos
 void setup_gpio(uint pin, bool is_output) {
@@ -168,9 +170,47 @@ int main() {
         }
 
         if (medicao_ativa) {
+            uint32_t tempo_atual = to_ms_since_boot(get_absolute_time());
+        
+            // Garante que a medição não comece com erro imediato
+            if (tempo_inicio_medicao == 0) {
+                tempo_inicio_medicao = tempo_atual;
+            }
+        
+            // Se a frequência for maior que 0, significa que há contato → Reinicia o contador
+            if (frequencia_instantanea > 0) {  
+                tempo_inicio_medicao = tempo_atual;
+                printf("Contato detectado. Reiniciando contador de inatividade.\n");
+            }
+        
             atualizar_medicao(&ssd);
             medicao_realizada = true;
-        } 
+        
+            // Se a frequência ficar em zero por 5 segundos, cancela a medição
+            if (tempo_atual - tempo_inicio_medicao >= TEMPO_LIMITE_MEDICAO) {
+                printf("Medição cancelada por inatividade!\n");
+        
+                // Toca som de erro antes de cancelar
+                tocar_som_erro();
+        
+                // Exibir mensagem de erro no display
+                ssd1306_fill(&ssd, false);
+                ssd1306_draw_string(&ssd, "Erro", 50, 10);
+                ssd1306_draw_string(&ssd, "Sem contato", 20, 25);
+                ssd1306_draw_string(&ssd, "por 5s", 30, 40);
+                ssd1306_draw_string(&ssd, "Cancelando...", 15, 55);
+                ssd1306_send_data(&ssd);
+                sleep_ms(2000);
+        
+                // Cancela a medição e retorna ao menu principal
+                medicao_ativa = false;
+                medicao_realizada = false;
+                tempo_inicio_medicao = 0;
+                menu_state = MENU_PRINCIPAL;
+                update_display = true;
+            }
+        }                   
+
         else if (medicao_realizada) {
             static bool resultados_exibidos = false;
 

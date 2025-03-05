@@ -16,14 +16,14 @@
 #define I2C_SDA 14
 #define I2C_SCL 15
 #define OLED_ADDRESS 0x3C
-#define DURACAO_MEDICAO 10000 //30000 // 30 segundos em milissegundos
+#define DURACAO_MEDICAO 15000 // 15 segundos em milissegundos
 #define POLLING_RATE 1 // Polling mais rápido para capturar mudanças
 #define TIMEOUT_FREQUENCIA 500 // Tempo limite para resetar a frequência
 #define MEDIA_MOVEL 5 // Número de amostras para suavização
 
 ssd1306_t display;
 static uint32_t tempo_ultimo_pulso = 0;
-static float frequencia_instantanea = 0;
+float frequencia_instantanea = 0;
 static float historico_frequencias[MEDIA_MOVEL] = {0};
 static int indice_frequencia = 0;
 bool medicao_ativa = false;
@@ -42,6 +42,10 @@ void atualizar_display(const char *mensagem) {
     ssd1306_fill(&display, 0);
     ssd1306_draw_string(&display, mensagem, 0, 0);
     ssd1306_send_data(&display);
+}
+
+bool detectar_contato_usuario() {
+    return frequencia_instantanea > 0;
 }
 
 void medir_frequencia_instantanea() {
@@ -84,14 +88,17 @@ float calcular_media_frequencia() {
 
 void iniciar_medicao(ssd1306_t *display) {
     tocar_som_preenchimento();
+    
     if (!medicao_ativa) {
         medicao_ativa = true;
-        tempo_inicio_medicao = to_ms_since_boot(get_absolute_time());
+        tempo_inicio_medicao = to_ms_since_boot(get_absolute_time()); // INICIALIZA AQUI!
+        tempo_ultimo_pulso = tempo_inicio_medicao; // Reseta o tempo do último pulso também
         iniciar_sinal_pwm(GPIO_EMISSAO, 1000, 6250);
         gpio_init(GPIO_RECEPCAO);
         gpio_set_dir(GPIO_RECEPCAO, GPIO_IN);
     }
 }
+
 
 void atualizar_medicao(ssd1306_t *display) {
     if (!medicao_ativa) return; // Se a medição foi interrompida, sai imediatamente
