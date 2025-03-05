@@ -6,5 +6,6 @@ void tocar_notificacao();
 void tocar_som_preenchimento();
 void parar_som_preenchimento();
 void atualizar_buzzer();
+void tocar_som_erro();
 
 #endif

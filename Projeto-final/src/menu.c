@@ -60,7 +60,6 @@ void on_button_down() {
 // Função que inicia a medição de bioimpedância
 void menu_medir(ssd1306_t *ssd) {
     if (!usuario.dados_cadastrados) {
-        printf("Por favor, insira os seus dados antes da medição!\n");
         menu_state = MENU_DADOS_USUARIO;
         return;
     }
@@ -71,51 +70,42 @@ void menu_medir(ssd1306_t *ssd) {
 
 // Ação ao pressionar o botão SELECT
 void on_button_select(ssd1306_t *ssd) {
-    printf("Botão SELECT pressionado! Estado atual: %d\n", menu_state);
     tocar_notificacao(); // Som ao mudar de menu
 
     switch (menu_state) {
         case MENU_PRINCIPAL:
             if (menu_index == 0) {  // Medição
                 if (!usuario.dados_cadastrados) {
-                    printf("Redirecionando para MENU_DADOS_USUARIO...\n");
                     menu_state = MENU_DADOS_USUARIO;
                 } else {
-                    printf("Redirecionando para MENU_CONFIRMAR_MEDICAO...\n");
                     menu_state = MENU_CONFIRMAR_MEDICAO;
                     exibir_confirmacao(ssd);
                 }
             } else if (menu_index == 1) {  // Inserir Dados
-                printf("Entrando no submenu de edição de dados...\n");
                 menu_state = MENU_DADOS_USUARIO;
                 submenu_index = 0;
             }
             break;
 
         case MENU_CONFIRMAR_MEDICAO:
-            printf("Confirmando medição...\n");
             menu_state = MENU_MEDIR;
             iniciar_medicao(ssd);
             break;
 
         case MENU_DADOS_USUARIO:
-            printf("Entrando no modo de edição de dados...\n");
             menu_state = MENU_EDITAR_DADO;
             update_display = true;
             break;
 
         case MENU_EDITAR_DADO:
-            printf("Confirmando edição, retornando ao MENU_DADOS_USUARIO...\n");
             menu_state = MENU_DADOS_USUARIO;
             update_display = true;
             break;
 
         default:
-            printf("Voltando ao MENU_PRINCIPAL...\n");
             menu_state = MENU_PRINCIPAL;
             break;
     }
-    printf("Novo estado do menu: %d\n", menu_state);
     update_display = true;
 }
 
