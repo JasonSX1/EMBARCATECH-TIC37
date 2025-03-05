@@ -55,7 +55,32 @@ void button_isr(uint gpio, uint32_t events) {
 
     if (gpio == BUTTON_JOY) {
         if (menu_state == MENU_CONFIRMAR_MEDICAO) {
-            // Inicia a medição
+            // Verificar se os dados estão completos antes de iniciar a medição
+            if (usuario.idade <= 0 || usuario.altura <= 0 || usuario.peso <= 0.0 || (usuario.sexo != 0 && usuario.sexo != 1)) {
+                printf("Erro: Dados do usuário incompletos!\n");
+
+                // Emite som de erro
+                tocar_som_erro();
+
+                // Exibe a mensagem no display
+                ssd1306_fill(&ssd, false);
+                ssd1306_draw_string(&ssd, "Erro", 50, 10);
+                ssd1306_draw_string(&ssd, "Preencha os", 20, 25);
+                ssd1306_draw_string(&ssd, "dados antes", 20, 40);
+                ssd1306_draw_string(&ssd, "de medir", 30, 55);
+                ssd1306_send_data(&ssd);
+
+                // Aguarda o usuário pressionar o botão SELECT para continuar
+                for (int i = 0; i < 20 && gpio_get(BUTTON_JOY); i++) {
+                    sleep_ms(100);  // Aguarda no máximo 2 segundos
+                }
+
+                // Redireciona o usuário ao menu de edição de dados
+                menu_state = MENU_DADOS_USUARIO;
+                return;
+            }
+
+            // Iniciar a medição somente se os dados estiverem completos
             menu_state = MENU_MEDIR;
             iniciar_medicao(&ssd);
             update_display = true;
