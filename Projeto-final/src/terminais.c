@@ -28,6 +28,8 @@ static float historico_frequencias[MEDIA_MOVEL] = {0};
 static int indice_frequencia = 0;
 bool medicao_ativa = false;
 uint32_t tempo_inicio_medicao = 0;
+static bool ultimo_estado_contato = false;
+static uint32_t tempo_ultima_mudanca = 0;
 
 void iniciar_sinal_pwm(uint gpio, uint freq, uint duty_cycle) {
     gpio_set_function(gpio, GPIO_FUNC_PWM);
@@ -99,11 +101,11 @@ void iniciar_medicao(ssd1306_t *display) {
     }
 }
 
-
 void atualizar_medicao(ssd1306_t *display) {
     if (!medicao_ativa) return; // Se a medição foi interrompida, sai imediatamente
 
     uint32_t tempo_atual = to_ms_since_boot(get_absolute_time());
+
     if (tempo_atual - tempo_inicio_medicao >= DURACAO_MEDICAO) {
         medicao_ativa = false;
         pwm_set_enabled(pwm_gpio_to_slice_num(GPIO_EMISSAO), false);
@@ -113,7 +115,6 @@ void atualizar_medicao(ssd1306_t *display) {
         float media_frequencia = calcular_media_frequencia();
         exibir_resultados_no_display(display, media_frequencia);
     }
-    
 
     medir_frequencia_instantanea();
     
@@ -121,10 +122,29 @@ void atualizar_medicao(ssd1306_t *display) {
         frequencia_instantanea = 0;
     }
 
-    char buffer[64];
-    snprintf(buffer, sizeof(buffer), "Freq: %.2f Hz", frequencia_instantanea);
-    printf("%s\n", buffer);
-    ssd1306_fill(display, false);
-    ssd1306_draw_string(display, buffer, 10, 20);
-    ssd1306_send_data(display);
+    // Verifica se há contato atual
+    bool estado_atual = (frequencia_instantanea > 0);
+
+    // Só atualiza se o estado permanecer o mesmo por 500ms
+    if (estado_atual != ultimo_estado_contato) {
+        tempo_ultima_mudanca = tempo_atual;
+        ultimo_estado_contato = estado_atual;
+    } 
+
+    if (tempo_atual - tempo_ultima_mudanca >= 500) {
+        // Limpa o display
+        ssd1306_fill(display, false);
+
+        if (estado_atual) {
+            // Exibe "MEDINDO" na linha de cima e "BIOIMPED" abaixo
+            ssd1306_draw_string(display, "MEDINDO", 30, 25);
+            ssd1306_draw_string(display, "BIOIMPED", 25, 40);
+        } else {
+            // Exibe "SEM CONTATO" em uma linha só
+            ssd1306_draw_string(display, "SEM CONTATO", 20, 30);
+        }
+
+        // Atualiza o display
+        ssd1306_send_data(display);
+    }
 }
