@@ -187,7 +187,7 @@ void menu_dados_usuario(ssd1306_t *ssd) {
                 snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "%.1f kg", usuario.peso);
                 break;
             case 3:
-                snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "%s", usuario.sexo ? "Masculino" : "Feminino");
+                snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "%s", usuario.sexo ? "Masc" : "Fem");
                 break;
         }
 
